@@ -4,28 +4,31 @@ const jwt = require('jsonwebtoken');
 
 // Sign up user
 exports.signup = async (req, res) => {
-  const { username, password, role } = req.body;
+  const { username, email, password, role } = req.body;
 
   try {
-    let user = await User.findOne({ username });
-    if (user) {
-      return res.status(400).json({ msg: 'User already exists' });
-    }
-
-    user = new User({
-      username,
-      password,
-      role: role || 'regular', 
+    let existingUser = await User.findOne({
+      $or: [{ username }, { email }]
     });
 
-    // Encrypt password
+    if (existingUser) {
+      return res.status(400).json({ msg: 'Username or email already exists' });
+    }
+
+    const user = new User({
+      username,
+      email,
+      password,
+      role: role || 'regular',
+    });
+
     const salt = await bcrypt.genSalt(10);
     user.password = await bcrypt.hash(password, salt);
 
     await user.save();
+
     const payload = { user: { id: user.id } };
 
-    // Generate token
     jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '1h' }, (err, token) => {
       if (err) throw err;
       res.json({ token });
@@ -36,12 +39,16 @@ exports.signup = async (req, res) => {
   }
 };
 
+
 // Sign in user
 exports.signin = async (req, res) => {
-  const { username, password } = req.body;
+  const { usernameOrEmail, password } = req.body;
 
   try {
-    let user = await User.findOne({ username });
+    let user = await User.findOne({
+      $or: [{ username: usernameOrEmail }, { email: usernameOrEmail }]
+    });
+
     if (!user) {
       return res.status(400).json({ msg: 'No matched user' });
     }
