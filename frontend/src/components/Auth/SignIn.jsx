@@ -1,10 +1,23 @@
-import { Card, Form, Input, Button } from "antd";
+import { Card, Form, Input, Button, message } from "antd";
 import React from "react";
+import {signIn} from "./auth"
+import { Link } from "react-router-dom";
 
 
 const SignIn = () => {
     const onFinish = (values) => {
-        console.log('Sign In data:', values);
+        signIn(values).then(
+            (data) => {
+                if (data.success) {
+                    message.success("Sign In successful!");
+                } else {
+                    message.error(data.message || "Something went wrong.");
+                }
+            }
+        ).catch((error) => {
+            console.error("Sign up error:", error);
+            message.error("Signup failed. Please try again.");
+        });
     }
     const onFinishFailed = (values) => {
         console.log('not able to sign in')
@@ -51,6 +64,10 @@ const SignIn = () => {
                         Sign in
                     </Button>
                     </Form.Item>
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: 16 }}>
+                            <span>Don't have an account? <Link to="/signup">Sign Up</Link></span>
+                            <Link to="/updatepassword">Forget password?</Link>
+                    </div>
                 </Form>
             </Card>
         </div>

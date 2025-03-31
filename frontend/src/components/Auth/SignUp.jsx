@@ -1,13 +1,26 @@
-import { Card, Form, Input, Button } from "antd";
+import { Card, Form, Input, Button, message} from "antd";
 import React from "react";
+import { signUp } from "./auth";
+import { Link } from "react-router-dom";
 
 
-const SignIn = () => {
+const SignUp = () => {
     const onFinish = (values) => {
-        console.log('Sign Up data:', values);
-    }
+        signUp(values)
+            .then((data) => {
+                if (data.success) {
+                    message.success("Sign up successful!");
+                } else {
+                    message.error(data.message || "Something went wrong.");
+                }
+            })
+            .catch((error) => {
+                console.error("Sign up error:", error);
+                message.error("Signup failed. Please try again.");
+            });
+    };
     const onFinishFailed = (values) => {
-        console.log('not able to sign in')
+        console.log('not able to sign in with ', values)
     }
 
     return (
@@ -31,6 +44,14 @@ const SignIn = () => {
                     autoComplete="off"
                 >
                     <Form.Item
+                    label="Username"
+                    name="Username"
+                    rules={[{ required: true, message: 'Invalid Username input!' }]}
+                    >
+                    <Input />
+                    </Form.Item>
+                    
+                    <Form.Item
                     label="Email"
                     name="Email"
                     rules={[{ required: true, message: 'Invalid Email input!' }]}
@@ -51,10 +72,13 @@ const SignIn = () => {
                         Create account
                     </Button>
                     </Form.Item>
+                    <div style={{ textAlign: "center", marginTop: 16 }}>
+                        Already have an account? <Link to="/signin">Sign In</Link>
+                    </div>
                 </Form>
             </Card>
         </div>
     )
 }
 
-export default SignIn
+export default SignUp
