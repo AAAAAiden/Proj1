@@ -45,7 +45,7 @@ const SignIn = () => {
                 >
                     <Form.Item
                     label="Email"
-                    name="Email"
+                    name="email"
                     rules={[{ required: true, message: 'Invalid Email input!' }]}
                     >
                     <Input />

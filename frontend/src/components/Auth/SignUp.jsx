@@ -45,7 +45,7 @@ const SignUp = () => {
                 >
                     <Form.Item
                     label="Username"
-                    name="Username"
+                    name="username"
                     rules={[{ required: true, message: 'Invalid Username input!' }]}
                     >
                     <Input />
@@ -53,7 +53,7 @@ const SignUp = () => {
                     
                     <Form.Item
                     label="Email"
-                    name="Email"
+                    name="email"
                     rules={[{ required: true, message: 'Invalid Email input!' }]}
                     >
                     <Input />

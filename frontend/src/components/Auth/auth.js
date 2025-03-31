@@ -1,7 +1,7 @@
-const BASE_URL = "http://localhost:5000/api"; 
+const BASE_URL = "http://localhost:3000/api"; 
 
 export function signUp(userData) {
-    return fetch(`${BASE_URL}/signup`, {
+    return fetch(`${BASE_URL}/auth/signup`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(userData),
@@ -10,7 +10,7 @@ export function signUp(userData) {
 
 
 export function signIn(userData) {
-    return fetch(`${BASE_URL}/signin`, {
+    return fetch(`${BASE_URL}/auth/signin`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(userData),
@@ -19,7 +19,7 @@ export function signIn(userData) {
 
 
 export function updatePassword(userData) {
-    return fetch(`${BASE_URL}/updatePassword`, {
+    return fetch(`${BASE_URL}/auth/updatePassword`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(userData),
