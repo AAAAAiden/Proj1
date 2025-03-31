@@ -21,14 +21,19 @@ const SignUp = () => {
           messageApi.success("🎉 Account created successfully!");
           form.resetFields();
         } else {
-          messageApi.error(data.msg || "Something went wrong, no token generated.");
-        }
+            if (data.msg === "Username or email already exists") {
+                messageApi.error("Username or email is already taken. Please try again.");
+              } else {
+                messageApi.error(data.msg || "Something went wrong.");
+              }        
+            }
       })
-      .catch(() => {
+      .catch((err) => {
+        console.error("Sign up error:", err);
         messageApi.error("Signup failed. Please try again.");
       });
   };
-  
+
   return (
     <>
       {contextHolder}

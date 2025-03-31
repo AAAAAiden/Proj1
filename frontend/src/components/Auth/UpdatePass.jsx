@@ -1,59 +1,92 @@
-import { Card, Form, Input, Button, message} from "antd";
-import React from "react";
-import {updatePassword} from "./auth"
+import React, { useEffect, useState } from "react";
+import { Card, Form, Input, Button, Typography, message } from "antd";
+import { updatePassword } from "./auth";
+import { useNavigate } from "react-router-dom";
+const { Title, Text } = Typography;
 
 const UpdatePassword = () => {
-    const onFinish = (values) => {
-        updatePassword(values).then(
-            (data)=>{
-                if (data.success) {
-                    if (data.success) {
-                        message.success("password update successfully");
-                    } else {
-                        message.error(data.message || "Something went wrong.");
-                    }
-                }
-            }
-        ).catch((error) => {
-                    console.error("Sign up error:", error);
-                    message.error("Signup failed. Please try again.");
-        });
-    }
+  const [form] = Form.useForm();
+  const [animate, setAnimate] = useState(false);
+  const [messageApi, contextHolder] = message.useMessage();
+  const navigate = useNavigate();
+  useEffect(() => {
+    setAnimate(true);
+  }, []);
 
-    const onFinishFailed = (values) => {
-        console.log('not able to update')
-    }
+  const onFinish = (values) => {
+    updatePassword(values)
+      .then((data) => {
+        if (data.success) {
+            form.resetFields();
+            navigate("/recovery-sent");
+        } else {
+            messageApi.error(data.msg || "Something went wrong.");
+        }
+      })
+      .catch((error) => {
+        console.error("Update password error:", error);
+        messageApi.error("Password update failed. Please try again.");
+      });
+  };
 
+  return (
+    <>
+      {contextHolder}
+      <div
+        style={{
+          display: "flex",
+          height: "100vh",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        <Card
+          className={animate ? "animated-card" : ""}
+          style={{
+            width: 400,
+            borderRadius: 8,
+            background: "#fff",
+            border: "none",
+            boxShadow: "0 4px 12px rgba(0, 0, 0, 0.1)",
+          }}
+        >
+          <div style={{ padding: "40px 32px" }}>
+            <Title level={3} style={{ textAlign: "center", marginBottom: 12 }}>
+              Update Your Password
+            </Title>
+            <Text type="secondary" style={{ display: "block", textAlign: "center", marginBottom: 24, fontSize: '11px' }}>
+              Enter your email and we’ll send you a recovery link.
+            </Text>
 
-
-    return (
-        <Card>
             <Form
-                name="basic"
-                layout="vertical"
-                requiredMark={false}
-                labelCol={{ span: 8 }}
-                wrapperCol={{ span: 16 }}
-                style={{ maxWidth: 600 }}
-                initialValues={{ remember: true }}
-                onFinish={onFinish}
-                onFinishFailed={onFinishFailed}
-                autoComplete="off"
+              form={form}
+              layout="vertical"
+              onFinish={onFinish}
+              requiredMark={false}
+              autoComplete="off"
             >
-                <div><p>Update Your password</p></div>
-                <div><p>Enter your email link, we will send you the recovery link</p></div>
-                <Form.Item
-                    label="Email"
-                    name="Email"
-                    rules={[{ required: true, message: 'Invalid Email input!' }]}
-                    >
-                    <Input />
-                </Form.Item>
-                <Button type="primary" htmlType="submit">
-                    Update password
+              <Form.Item
+                label="Email"
+                name="email"
+                rules={[
+                  { required: true, message: "Please enter your email" },
+                  { type: "email", message: "Please enter a valid email address" },
+                ]}
+              >
+                <Input placeholder="you@example.com" />
+              </Form.Item>
+
+              <Form.Item>
+                <Button type="primary" htmlType="submit" block>
+                  Send Recovery Link
                 </Button>
+              </Form.Item>
             </Form>
+          </div>
         </Card>
-    )
+      </div>
+    </>
+  );
 };
-export default UpdatePassword
+
+export default UpdatePassword;

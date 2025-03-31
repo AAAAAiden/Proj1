@@ -5,7 +5,7 @@ import SignIn from './components/Auth/SignIn';
 import UpdatePassword from './components/Auth/UpdatePass';
 import Layout from './components/Layout';
 import Products from './components/pages/Products';
-
+import RecoverySent from "./components/Auth/RecoverySent";
 
 function App() {
   return (
@@ -17,6 +17,7 @@ function App() {
           <Route path="/signin" element={<SignIn />} />
           <Route path='/updatepassword' element={<UpdatePassword />} />
           <Route path="/products" element={<Products />} />
+          <Route path="/recovery-sent" element={<RecoverySent />} />
         </Route>
       </Routes>
     </Router>

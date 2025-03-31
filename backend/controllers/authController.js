@@ -73,24 +73,18 @@ exports.signin = async (req, res) => {
 
 // Update password
 exports.updatePassword = async (req, res) => {
-  const { oldPassword, newPassword } = req.body;
+  const { email } = req.body;
 
   try {
-    let user = await User.findById(req.user.id);
-    if (!user) {
-      return res.status(400).json({ msg: 'User not found' });
-    }
+    // Optionally check if email exists
+    // const user = await User.findOne({ email });
+    // if (!user) return res.status(400).json({ msg: 'Email not found' });
 
-    const isMatch = await bcrypt.compare(oldPassword, user.password);
-    if (!isMatch) {
-      return res.status(400).json({ msg: 'Incorrect old password' });
-    }
+    // Just simulate sending an email
+    console.log(`Mock: Sent password recovery email to ${email}`);
 
-    const salt = await bcrypt.genSalt(10);
-    user.password = await bcrypt.hash(newPassword, salt);
-
-    await user.save();
-    res.json({ msg: 'Password updated successfully' });
+    // Respond with success
+    res.json({ success: true, msg: 'Recovery email sent' });
   } catch (err) {
     console.error(err.message);
     res.status(500).send('Server Error');
