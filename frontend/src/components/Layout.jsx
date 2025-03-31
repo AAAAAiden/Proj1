@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Outlet, Link } from "react-router-dom";
 import { Input } from "antd";
 import {
@@ -9,8 +9,11 @@ import {
   TwitterOutlined,
   FacebookOutlined,
 } from "@ant-design/icons";
+import { useAuth } from "../context/AuthContext";
 
 const Layout = () => {
+  const { username, signOut } = useAuth();
+
   return (
     <div className="layout-container">
       <header className="app-header">
@@ -23,10 +26,17 @@ const Layout = () => {
           prefix={<SearchOutlined />}
         />
         <div className="header-right">
-          <Link to="/signin" className="header-icon-link">
-            <UserOutlined className="icon-left"/> 
-            Sign In
-          </Link>
+            {username ? (
+            <span style={{ color: "#fff", cursor: "pointer" }} onClick={signOut}>
+                <UserOutlined style={{ marginRight: 4 }} />
+                {username} | Sign Out
+            </span>
+            ) : (
+            <Link to="/signin" style={{ color: "#fff" }}>
+                <UserOutlined style={{ marginRight: 4 }} />
+                Sign In
+            </Link>
+            )}
           <div className="header-icon-link">
             <ShoppingCartOutlined className="icon-left"/> 
             $0.00

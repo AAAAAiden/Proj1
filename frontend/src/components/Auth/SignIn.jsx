@@ -1,77 +1,112 @@
-import { Card, Form, Input, Button, message } from "antd";
-import React from "react";
-import {signIn} from "./auth"
+import React, { useState, useEffect } from "react";
+import { Card, Form, Input, Button, message, Typography } from "antd";
+import { signIn } from "./auth";
 import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../context/AuthContext";
 
+const { Title, Text } = Typography;
 
 const SignIn = () => {
-    const onFinish = (values) => {
-        signIn(values).then(
-            (data) => {
-                if (data.success) {
-                    message.success("Sign In successful!");
-                } else {
-                    message.error(data.message || "Something went wrong.");
-                }
-            }
-        ).catch((error) => {
-            console.error("Sign up error:", error);
-            message.error("Signup failed. Please try again.");
-        });
-    }
-    const onFinishFailed = (values) => {
-        console.log('not able to sign in')
-    }
+  const [form] = Form.useForm();
+  const [messageApi, contextHolder] = message.useMessage();
+  const [animate, setAnimate] = useState(false);
+  const navigate = useNavigate();
+  const { signIn:setAuthUser } = useAuth();
 
-    return (
-        <div>
-            <style>{`
-                .ant-form-item-explain {
-                text-align: right;
-                }
-            `}</style>
-            <Card>
-                <Form
-                    name="basic"
-                    layout="vertical"
-                    requiredMark={false}
-                    labelCol={{ span: 8 }}
-                    wrapperCol={{ span: 16 }}
-                    style={{ maxWidth: 600 }}
-                    initialValues={{ remember: true }}
-                    onFinish={onFinish}
-                    onFinishFailed={onFinishFailed}
-                    autoComplete="off"
+
+  useEffect(() => {
+    setAnimate(true);
+  }, []);
+
+  const onFinish = (values) => {
+    signIn(values)
+      .then((data) => {
+        if (data.token) {
+          messageApi.success("Sign In successful!");
+          form.resetFields();
+          setAuthUser(data.username);
+          setTimeout(() => {
+            navigate("/products");
+          }, 1500);          
+        } else {
+          messageApi.error(data.message || "Something went wrong.");
+        }
+      })
+      .catch((error) => {
+        console.error("Sign in error:", error);
+        messageApi.error("Sign in failed. Please try again.");
+      });
+  };
+
+  return (
+    <>
+      {contextHolder}
+      <div
+        style={{
+          display: "flex",
+          height: "100vh",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        <Card
+          className={animate ? "animated-card" : ""}
+          style={{
+            width: 400,
+            borderRadius: 8,
+            background: "#fff",
+            border: "none",
+            boxShadow: "0 4px 12px rgba(0, 0, 0, 0.1)",
+          }}
+        >
+          <div style={{ padding: "40px 32px" }}>
+            <Title level={3} style={{ textAlign: "center", marginBottom: 32 }}>
+              Sign in to your account
+            </Title>
+
+            <Form
+              form={form}
+              layout="vertical"
+              onFinish={onFinish}
+              requiredMark={false}
+              autoComplete="off"
+            >
+              <Form.Item
+                name="usernameOrEmail" 
+                rules={[
+                    { required: true, message: "Please enter your email or username" }
+                ]}
                 >
-                    <Form.Item
-                    label="Email"
-                    name="email"
-                    rules={[{ required: true, message: 'Invalid Email input!' }]}
-                    >
-                    <Input />
-                    </Form.Item>
+                <Input placeholder="Username or Email" />
+              </Form.Item>
 
-                    <Form.Item
-                    label="Password"
-                    name="password"
-                    rules={[{ required: true, message: 'Invalid password input!' }]}
-                    >
-                    <Input.Password />
-                    </Form.Item>
+              <Form.Item
+                name="password"
+                rules={[{ required: true, message: "Please enter your password" }]}
+              >
+                <Input.Password placeholder="Password" />
+              </Form.Item>
 
-                    <Form.Item label={null}>
-                    <Button type="primary" htmlType="submit">
-                        Sign in
-                    </Button>
-                    </Form.Item>
-                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: 16 }}>
-                            <span>Don't have an account? <Link to="/signup">Sign Up</Link></span>
-                            <Link to="/updatepassword">Forget password?</Link>
-                    </div>
-                </Form>
-            </Card>
-        </div>
-    )
-}
+              <Form.Item>
+                <Button type="primary" htmlType="submit" block>
+                  Sign In
+                </Button>
+              </Form.Item>
 
-export default SignIn
+              <div style={{ marginTop: 16, textAlign: "center" }}>
+                <Text type="secondary">
+                    Don’t have an account? <Link to="/signup">Sign Up</Link>
+                </Text>
+                <br />
+                <Link to="/updatepassword">Forgot password?</Link>
+              </div>
+            </Form>
+          </div>
+        </Card>
+      </div>
+    </>
+  );
+};
+
+export default SignIn;

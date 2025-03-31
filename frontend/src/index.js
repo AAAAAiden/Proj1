@@ -8,6 +8,7 @@ import { DatePicker, message } from 'antd';
 import { createRoot } from 'react-dom/client';
 import SignIn from './components/Auth/SignIn';
 import SignUp from './components/Auth/SignUp';
+import { AuthProvider } from './context/AuthContext';
 
 const container = document.getElementById("root");
 if (!container) {
@@ -16,7 +17,9 @@ if (!container) {
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-    <App />
+    <AuthProvider>
+      <App />
+    </AuthProvider>
   </React.StrictMode>
 );
 
