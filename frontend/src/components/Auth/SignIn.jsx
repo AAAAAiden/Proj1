@@ -26,6 +26,7 @@ const SignIn = () => {
         if (data.token) {
           messageApi.success("Sign In successful!");
           form.resetFields();
+          localStorage.setItem("token", data.token);
           setAuthUser(data.username);
           setTimeout(() => {
             navigate("/products");
