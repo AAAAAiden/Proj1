@@ -22,15 +22,23 @@ const SignIn = () => {
   const onFinish = (values) => {
     signIn(values)
       .then((data) => {
+        console.log(data);
         if (data.token) {
           messageApi.success("Sign In successful!");
           form.resetFields();
+          localStorage.setItem("token", data.token);
           setAuthUser(data.username);
           setTimeout(() => {
             navigate("/products");
           }, 1500);          
         } else {
-          messageApi.error(data.message || "Something went wrong.");
+            if (data.msg === "Invalid credentials") {
+                messageApi.error("Incorrect password. Please try again.");
+              } else if (data.msg === "No matched user") {
+                messageApi.error("No account found with that email or username.");
+              } else {
+                messageApi.error(data.msg || "Something went wrong.");
+              }
         }
       })
       .catch((error) => {
