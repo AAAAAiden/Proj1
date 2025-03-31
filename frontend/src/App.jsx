@@ -3,8 +3,8 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import SignUp from './components/Auth/SignUp';
 import SignIn from './components/Auth/SignIn';
 import UpdatePassword from './components/Auth/UpdatePass';
-import Layout from './components/pages/Home/Home';
-
+import Layout from './components/Layout';
+import Products from './components/pages/Products';
 
 
 function App() {
@@ -16,6 +16,7 @@ function App() {
           <Route path="/signup" element={<SignUp />} />
           <Route path="/signin" element={<SignIn />} />
           <Route path='/updatepassword' element={<UpdatePassword />} />
+          <Route path="/products" element={<Products />} />
         </Route>
       </Routes>
     </Router>
