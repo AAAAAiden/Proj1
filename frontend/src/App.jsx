@@ -7,6 +7,7 @@ import Layout from './components/Layout';
 import Products from './components/pages/Products';
 import RecoverySent from "./components/Auth/RecoverySent";
 import UploadPro from "./components/pages/uploadPro";
+import ProductCard from "./components/pages/ProductCard"
 
 function App() {
   return (
@@ -20,10 +21,26 @@ function App() {
           <Route path="/products" element={<Products />} />
           <Route path="/recovery-sent" element={<RecoverySent />} />
           <Route path="/productupload" element={<UploadPro />} />
+          
         </Route>
       </Routes>
     </Router>
   );
 }
 
+//test productcard
+// function App() {
+//   const sampleProduct = {
+//     name: 'Sample Product',
+//     price: 99.99,
+//     image: 'https://os.alipayobjects.com/rmsportal/QBnOOoLaAfKPirc.png',
+//     description: 'A wonderful product for testing'
+//   };
+
+//   return (
+//     <div style={{ display: 'flex', justifyContent: 'center', padding: '20px' }}>
+//       <ProductCard product={sampleProduct} />
+//     </div>
+//   );
+// }
 export default App;

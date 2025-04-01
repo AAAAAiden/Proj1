@@ -98,3 +98,14 @@
   font-size: 20px;
   margin-right: 10px;
 }
+
+
+
+
+
+
+.addToCart input[type=number]::-webkit-inner-spin-button,
+.addToCart input[type=number]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
