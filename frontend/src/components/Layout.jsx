@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { Outlet, Link, useNavigate } from "react-router-dom";
 import { Input, message } from "antd";
 import {
@@ -12,19 +12,24 @@ import {
 import { useAuth } from "../context/AuthContext";
 
 const Layout = () => {
-    const { username, signOut } = useAuth();
-    const navigate = useNavigate();
-    const [messageApi, contextHolder] = message.useMessage();
+  const { username, token, signOut, loading } = useAuth();
+  const navigate = useNavigate();
+  const [messageApi, contextHolder] = message.useMessage();
 
-    const handleSignOut = () => {
-      signOut();
-      messageApi.success("Successfully signed out!");
-      setTimeout(() => {
-        navigate("/signin");
-      }, 1500);
-    };
-  
-    return (
+  // Prevent user from being null before session loads
+  if (loading) {
+    return null; 
+  }
+
+  const handleSignOut = () => {
+    signOut();
+    messageApi.success("Successfully signed out!");
+    setTimeout(() => {
+      navigate("/signin");
+    }, 1500);
+  };
+
+  return (
     <>
       {contextHolder}
       <div className="layout-container">
@@ -36,6 +41,7 @@ const Layout = () => {
             className="search-input"
             placeholder="Search"
             prefix={<SearchOutlined />}
+            disabled={!token}
           />
           <div className="header-right">
             {username ? (
@@ -58,11 +64,11 @@ const Layout = () => {
             </div>
           </div>
         </header>
-  
+
         <main className="main-content">
           <Outlet />
         </main>
-  
+
         <footer className="app-footer">
           <div className="footer-left">©2025 All Rights Reserved.</div>
           <div className="footer-center">
@@ -78,7 +84,7 @@ const Layout = () => {
         </footer>
       </div>
     </>
-    );
-  };
-  
-  export default Layout;
+  );
+};
+
+export default Layout;

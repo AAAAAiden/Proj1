@@ -7,6 +7,7 @@ import Layout from './components/Layout';
 import Products from './components/pages/Products';
 import RecoverySent from "./components/Auth/RecoverySent";
 import UploadPro from "./components/pages/uploadPro";
+import AdminRoute from "./components/Auth/AdminRoute";
 import ProductCard from "./components/pages/ProductCard"
 
 function App() {
@@ -22,6 +23,14 @@ function App() {
           <Route path="/recovery-sent" element={<RecoverySent />} />
           <Route path="/productupload" element={<UploadPro />} />
           
+          <Route
+            path="/productupload"
+            element={
+              <AdminRoute>
+                <UploadPro />
+              </AdminRoute>
+            }
+          />
         </Route>
       </Routes>
     </Router>

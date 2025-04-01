@@ -14,20 +14,21 @@ const SignIn = () => {
   const navigate = useNavigate();
   const { signIn:setAuthUser } = useAuth();
 
-
   useEffect(() => {
     setAnimate(true);
+    sessionStorage.clear();
+    setAuthUser(null, null);
   }, []);
 
   const onFinish = (values) => {
     signIn(values)
       .then((data) => {
-        console.log(data);
         if (data.token) {
+          setAuthUser(data.username, data.token);
           messageApi.success("Sign In successful!");
           form.resetFields();
-          localStorage.setItem("token", data.token);
-          setAuthUser(data.username);
+          sessionStorage.setItem("token", data.token);
+          sessionStorage.setItem("role", data.role); 
           setTimeout(() => {
             navigate("/products");
           }, 1500);          
