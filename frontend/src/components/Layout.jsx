@@ -12,9 +12,14 @@ import {
 import { useAuth } from "../context/AuthContext";
 
 const Layout = () => {
-  const { username, token, signOut } = useAuth();
+  const { username, token, signOut, loading } = useAuth();
   const navigate = useNavigate();
   const [messageApi, contextHolder] = message.useMessage();
+
+  // Prevent user from being null before session loads
+  if (loading) {
+    return null; 
+  }
 
   const handleSignOut = () => {
     signOut();
