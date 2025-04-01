@@ -7,12 +7,12 @@ const checkToken = (req, res, next) => {
   if (!token) {
     return res.status(403).json({ msg: 'No token, authorization denied' });
   }
-
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     req.user = decoded.user;
     next();
   } catch (err) {
+    console.log(err);
     res.status(403).json({ msg: 'Token is not valid' });
   }
 };
