@@ -3,35 +3,50 @@ const upload = require('../utils/s3Config');
 
 // Create product
 exports.createProduct = async (req, res) => {
+  const multipart = require('multiparty');
+  const form = new multipart.Form();
 
-  upload.single('image')(req, res, async (err) => {
+  form.parse(req, async (err, fields, files) => {
     if (err) {
-      return res.status(400).json({ msg: 'Error uploading image: ' + err.message });
+      return res.status(400).json({ msg: 'Invalid form data' });
     }
 
-    const { name, description, price, category, quantity } = req.body;
-    const imageUrl = req.file ? req.file.location : null;  
+    const name = fields.name?.[0];
 
-    if (!imageUrl) {
-      return res.status(400).json({ msg: 'No image uploaded' });
+    const existingProduct = await Product.findOne({ name: { $regex: `^${name}$`, $options: "i" } });
+    if (existingProduct) {
+      return res.status(400).json({ msg: 'Product name already exists' });
     }
 
-    try {
-      const newProduct = new Product({
-        name,
-        description,
-        price,
-        category,
-        quantity,
-        image: imageUrl, 
-      });
+    upload.single('image')(req, res, async (uploadErr) => {
+      if (uploadErr) {
+        return res.status(400).json({ msg: 'Error uploading image: ' + uploadErr.message });
+      }
 
-      await newProduct.save();
-      res.json(newProduct);  
-    } catch (err) {
-      console.error(err.message);
-      res.status(500).send('Server Error');
-    }
+      const { description, price, category, quantity } = req.body;
+      const imageUrl = req.file ? req.file.location : null;
+
+      if (!imageUrl) {
+        return res.status(400).json({ msg: 'No image uploaded' });
+      }
+
+      try {
+        const newProduct = new Product({
+          name,
+          description,
+          price,
+          category,
+          quantity,
+          image: imageUrl,
+        });
+
+        await newProduct.save();
+        res.json(newProduct);
+      } catch (err) {
+        console.error(err.message);
+        res.status(500).json({ msg: 'Server Error' });
+      }
+    });
   });
 };
 
@@ -43,7 +58,7 @@ exports.listProducts = async (req, res) => {
     res.json(products);
   } catch (err) {
     console.error(err.message);
-    res.status(500).send('Server Error');
+    res.status(500).json({msg: 'Server Error'});
   }
 };
 
@@ -57,7 +72,7 @@ exports.getProductById = async (req, res) => {
     res.json(product);
   } catch (err) {
     console.error(err.message);
-    res.status(500).send('Server Error');
+    res.status(500).json({msg: 'Server Error'});
   }
 };
 
@@ -75,7 +90,7 @@ exports.editProductById = async (req, res) => {
     res.json(updatedProduct);
   } catch (err) {
     console.error(err.message);
-    res.status(500).send('Server Error');
+    res.status(500).json({msg: 'Server Error'});
   }
 };
 
@@ -89,6 +104,6 @@ exports.deleteProductById = async (req, res) => {
     res.json({ msg: 'Product deleted' });
   } catch (err) {
     console.error(err.message);
-    res.status(500).send('Server Error');
+    res.status(500).json({msg: 'Server Error'});
   }
 };

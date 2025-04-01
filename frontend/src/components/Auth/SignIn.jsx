@@ -22,11 +22,12 @@ const SignIn = () => {
   const onFinish = (values) => {
     signIn(values)
       .then((data) => {
-        console.log(data);
         if (data.token) {
+            console.log(data);
           messageApi.success("Sign In successful!");
           form.resetFields();
           localStorage.setItem("token", data.token);
+          localStorage.setItem("role", data.role); 
           setAuthUser(data.username);
           setTimeout(() => {
             navigate("/products");

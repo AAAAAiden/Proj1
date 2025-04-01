@@ -1,33 +1,56 @@
 import React, { useState, useEffect } from "react";
-import { Card, Form, Input, Button, message, Typography, Descriptions , InputNumber, Select} from "antd";
-import { Link } from "react-router-dom";
+import {
+  Card, Form, Input, Button, message, Typography, InputNumber, Select, Upload,
+} from "antd";
+import { UploadOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
 
-const { Title, Text } = Typography;
+const { Title } = Typography;
+const { Option } = Select;
 
 const UploadPro = () => {
   const [form] = Form.useForm();
   const [messageApi, contextHolder] = message.useMessage();
   const [animate, setAnimate] = useState(false);
+  const [previewUrl, setPreviewUrl] = useState("");
   const navigate = useNavigate();
-  const { Option } = Select;
-  const [previewUrl, setPreviewUrl] = useState('');
-
 
   useEffect(() => {
     setAnimate(true);
   }, []);
 
   const onFinish = (values) => {
-    
-  };
+    const token = localStorage.getItem("token");
 
-  const handlePreview = () => {
-    
-    const imageUrl = form.getFieldValue(['product', 'image']);
-    setPreviewUrl(imageUrl);
-    console.log('Image URL: ', imageUrl);
-    console.log(imageUrl);
+    const formData = new FormData();
+    formData.append("name", values.product.name);
+    formData.append("description", values.product.Description || "");
+    formData.append("category", values.product.category);
+    formData.append("price", values.product.price);
+    formData.append("quantity", values.product.quantity);
+    formData.append("image", values.product.image[0].originFileObj);
+
+    fetch("http://localhost:5001/api/products", {
+      method: "POST",
+      headers: {
+        "x-auth-token": token,
+      },
+      body: formData,
+    })
+      .then(async (res) => {
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok) throw data;
+        return data;
+      })
+      .then((data) => {
+        messageApi.success("🎉 Product uploaded successfully!");
+        form.resetFields();
+        setPreviewUrl("");
+      })
+      .catch((err) => {
+        console.error("Upload error:", err);
+        messageApi.error(err.msg || "Failed to upload product.");
+      });
   };
 
   return (
@@ -53,7 +76,7 @@ const UploadPro = () => {
         >
           <div style={{ padding: "40px 32px" }}>
             <Title level={3} style={{ textAlign: "center", marginBottom: 32 }}>
-              Creat your account
+              Add New Product
             </Title>
 
             <Form
@@ -64,100 +87,148 @@ const UploadPro = () => {
               autoComplete="off"
             >
               <Form.Item
-                name={['product', 'name']} 
+                name={["product", "name"]}
                 label="Product name"
-                rules={[
-                    { required: true, message: "Please enter the name of the product" }
-                ]}
-                >
-                <Input/>
+                rules={[{ required: true, message: "Please enter the product name" }]}
+              >
+                <Input />
               </Form.Item>
 
               <Form.Item
-                name={['product', 'Description']} 
+                name={["product", "Description"]}
                 label="Product Description"
-
+                rules={[{ required: true, message: "Please enter the description" }]}
               >
                 <Input.TextArea />
               </Form.Item>
 
-                
-
-
-
-
-            <Form.Item style={{ marginBottom: 0 }}>
+              <Form.Item style={{ marginBottom: 0 }}>
                 <Form.Item
-                    label="Category"
-                    rules={[{ required: true }]}
-                    style={{ display: 'inline-block', width: 'calc(50% - 8px)' }}
+                  name={["product", "category"]}
+                  label="Category"
+                  rules={[{ required: true, message: "Please enter the category" }]}
+                  style={{
+                    display: "inline-block",
+                    width: "calc(50% - 8px)",
+                  }}
                 >
-                    <Select placeholder="Select Category">
-                        <Option value="category1">category1</Option>
-                        <Option value="category2">category2</Option>
-                    </Select>
+                  <Select placeholder="Select Category">
+                    <Option value="category1">category1</Option>
+                    <Option value="category2">category2</Option>
+                  </Select>
                 </Form.Item>
+
                 <Form.Item
-                    label="Price"
-                    rules={[{ required: true }]}
-                    style={{ display: 'inline-block', width: 'calc(50% - 8px)', margin: '0 8px' }}
+                  name={["product", "price"]}
+                  label="Price"
+                  rules={[
+                    { required: true, message: "Please enter the price" },
+                    {
+                      type: "number",
+                      min: 0,
+                      message: "Price must be a non-negative number",
+                    },
+                  ]}
+                  style={{
+                    display: "inline-block",
+                    width: "calc(50% - 8px)",
+                    margin: "0 8px",
+                  }}
                 >
-                    <InputNumber style={{width:'100%'}} controls={false}/>
+                  <InputNumber style={{ width: "100%" }} />
                 </Form.Item>
-            </Form.Item>
+              </Form.Item>
 
+              <Form.Item
+                name={["product", "quantity"]}
+                label="In Stock Quantity"
+                rules={[
+                  { required: true, message: "Please enter the quantity" },
+                  {
+                    validator: (_, value) => {
+                      if (value === undefined || value === null || value === "") {
+                        return Promise.reject("Please enter the quantity");
+                      }
+                      if (!Number.isInteger(Number(value)) || value <= 0) {
+                        return Promise.reject("Quantity must be a positive integer");
+                      }
+                      return Promise.resolve();
+                    },
+                  },
+                ]}
+                style={{
+                  display: "inline-block",
+                  width: "calc(35% - 8px)",
+                }}
+              >
+                <InputNumber style={{ width: "100%" }} />
+              </Form.Item>
 
-
-
-
-
-            <Form.Item  style={{ marginBottom: 0 }}>
-                <Form.Item
-                    name={['product', 'quantity']} 
-                    label="In Stock Quantity"
-                    rules={[{ required: true }]}
-                    style={{ display: 'inline-block', width: 'calc(35% - 8px)' }}
+              <Form.Item
+                name={["product", "image"]}
+                label="Product Image"
+                valuePropName="fileList"
+                getValueFromEvent={(e) => e && e.fileList}
+                rules={[{ required: true, message: "Please upload an image" }]}
+                style={{
+                  display: "inline-block",
+                  width: "calc(65% - 8px)",
+                  margin: "0 8px",
+                }}
+              >
+                <Upload
+                  accept="image/*"
+                  beforeUpload={() => false}
+                  maxCount={1}
+                  showUploadList={{ showPreviewIcon: false }}
+                  onChange={({ fileList }) => {
+                    const fileObj = fileList[0]?.originFileObj;
+                    if (fileObj) {
+                      const reader = new FileReader();
+                      reader.onload = (e) => setPreviewUrl(e.target.result);
+                      reader.readAsDataURL(fileObj);
+                    } else {
+                      setPreviewUrl("");
+                    }
+                  }}
                 >
-                    <InputNumber style={{width:'100%'}} controls={false}/>
-                </Form.Item>
-                <Form.Item
-                    name={['product', 'image']} 
-                    label = "Add Image Link"
-                    
-                    rules={[{ required: true }]}
-                    style={{ display: 'inline-block', width: 'calc(65% - 8px)', margin: '0 8px' }}
-                >
-                    <Input style={{width:'100%'}}
+                  <Button
+                    style={{
+                      backgroundColor: "hsl(260, 95.40%, 42.50%)",
+                      color: "white",
+                    }}
+                    icon={<UploadOutlined />}
+                  >
+                    Upload Image
+                  </Button>
+                </Upload>
+              </Form.Item>
 
-                    addonAfter={<Button style={{backgroundColor: "hsl(260, 95.40%, 42.50%)" ,color:"white", height:"20px", width:"60px"}} onClick={(handlePreview)}>Preview</Button>}
-                    />
-                </Form.Item>
-            </Form.Item>
-            <div
-        style={{
-          width: '300px',
-          height: '200px',
-          border: '1px solid #ccc',
-          marginTop: '16px',
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center'
-        }}
-      >
-        {previewUrl ? (
-          <img
-            src={previewUrl}
-            alt="Preview"
-            style={{
-              maxWidth: '100%',
-              maxHeight: '100%',
-              objectFit: 'contain'
-            }}
-          />
-        ) : (
-          <span>No image preview</span>
-        )}
-      </div>
+              <div
+                style={{
+                  width: "100%",
+                  height: "200px",
+                  border: "1px solid #ccc",
+                  marginTop: "16px",
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+              >
+                {previewUrl ? (
+                  <img
+                    src={previewUrl}
+                    alt="Preview"
+                    style={{
+                      maxWidth: "100%",
+                      maxHeight: "100%",
+                      objectFit: "contain",
+                    }}
+                  />
+                ) : (
+                  <span>No image preview</span>
+                )}
+              </div>
 
               <Form.Item>
                 <Button type="primary" htmlType="submit" block>
