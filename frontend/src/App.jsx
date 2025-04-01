@@ -7,6 +7,7 @@ import Layout from './components/Layout';
 import Products from './components/pages/Products';
 import RecoverySent from "./components/Auth/RecoverySent";
 import UploadPro from "./components/pages/uploadPro";
+import AdminRoute from "./components/Auth/AdminRoute";
 
 function App() {
   return (
@@ -19,7 +20,14 @@ function App() {
           <Route path='/updatepassword' element={<UpdatePassword />} />
           <Route path="/products" element={<Products />} />
           <Route path="/recovery-sent" element={<RecoverySent />} />
-          <Route path="/productupload" element={<UploadPro />} />
+          <Route
+            path="/productupload"
+            element={
+              <AdminRoute>
+                <UploadPro />
+              </AdminRoute>
+            }
+          />
         </Route>
       </Routes>
     </Router>
