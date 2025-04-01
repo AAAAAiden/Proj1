@@ -161,7 +161,7 @@ const UploadPro = () => {
 
               <Form.Item>
                 <Button type="primary" htmlType="submit" block>
-                  Sign In
+                  Add Product
                 </Button>
               </Form.Item>
             </Form>
