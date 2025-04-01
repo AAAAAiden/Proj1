@@ -6,6 +6,7 @@ import UpdatePassword from './components/Auth/UpdatePass';
 import Layout from './components/Layout';
 import Products from './components/pages/Products';
 import RecoverySent from "./components/Auth/RecoverySent";
+import UploadPro from "./components/pages/uploadPro";
 
 function App() {
   return (
@@ -18,6 +19,7 @@ function App() {
           <Route path='/updatepassword' element={<UpdatePassword />} />
           <Route path="/products" element={<Products />} />
           <Route path="/recovery-sent" element={<RecoverySent />} />
+          <Route path="/productupload" element={<UploadPro />} />
         </Route>
       </Routes>
     </Router>
