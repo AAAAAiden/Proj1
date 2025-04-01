@@ -5,8 +5,8 @@ import { useNavigate } from "react-router-dom";
 const { Title } = Typography;
 
 const Products = () => {
-  const username = localStorage.getItem("username");
-  const role = localStorage.getItem("role");
+  const username = sessionStorage.getItem("username");
+  const role = sessionStorage.getItem("role");
   const navigate = useNavigate();
   return (
     <div style={{ padding: "40px" }}>
