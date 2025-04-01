@@ -74,9 +74,16 @@ const ProductCard = ({product}) => {
             bodyStyle={{ padding: 0, paddingLeft: "10px", paddingRight:"10px" }}
             cover={
                 <div style={{ display: 'flex', justifyContent: 'center' ,marginTop:"10px", marginBottom:"0px" }}>
-            <img 
-                style={{height:'300px', width:'300px'}}
-                alt="example" src={product.image} /> </div>}
+                    <img
+                    src={product.image}
+                    alt={product.name}
+                    style={{ height: '300px', width: '300px', objectFit: 'cover' }}
+                    onError={(e) => {
+                        e.target.onerror = null;
+                        e.target.src = 'https://via.placeholder.com/300x300.png?text=No+Image'; // fallback image
+                    }}
+                    /> 
+                </div>}
         >
             <div style={{ textAlign: 'left', marginBottom: '5px', marginTop:'0px' }}>
                 <div style={{ fontSize: '16px', fontWeight: 'bold' }}>{product.name}</div>

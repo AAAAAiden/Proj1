@@ -20,9 +20,7 @@ function App() {
           <Route path="/signin" element={<SignIn />} />
           <Route path='/updatepassword' element={<UpdatePassword />} />
           <Route path="/products" element={<Products />} />
-          <Route path="/recovery-sent" element={<RecoverySent />} />
-          <Route path="/productupload" element={<UploadPro />} />
-          
+          <Route path="/recovery-sent" element={<RecoverySent />} />          
           <Route
             path="/productupload"
             element={

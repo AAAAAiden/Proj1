@@ -3,50 +3,34 @@ const upload = require('../utils/s3Config');
 
 // Create product
 exports.createProduct = async (req, res) => {
-  const multipart = require('multiparty');
-  const form = new multipart.Form();
-
-  form.parse(req, async (err, fields, files) => {
+  upload.single('image')(req, res, async (err) => {
     if (err) {
-      return res.status(400).json({ msg: 'Invalid form data' });
+      return res.status(400).json({ msg: 'Error uploading image: ' + err.message });
     }
 
-    const name = fields.name?.[0];
+    const { name, description, price, category, quantity } = req.body;
+    const imageUrl = req.file ? req.file.location : null;
 
-    const existingProduct = await Product.findOne({ name: { $regex: `^${name}$`, $options: "i" } });
-    if (existingProduct) {
-      return res.status(400).json({ msg: 'Product name already exists' });
+    if (!imageUrl) {
+      return res.status(400).json({ msg: 'No image uploaded' });
     }
 
-    upload.single('image')(req, res, async (uploadErr) => {
-      if (uploadErr) {
-        return res.status(400).json({ msg: 'Error uploading image: ' + uploadErr.message });
-      }
+    try {
+      const newProduct = new Product({
+        name,
+        description,
+        price,
+        category,
+        quantity,
+        image: imageUrl,
+      });
 
-      const { description, price, category, quantity } = req.body;
-      const imageUrl = req.file ? req.file.location : null;
-
-      if (!imageUrl) {
-        return res.status(400).json({ msg: 'No image uploaded' });
-      }
-
-      try {
-        const newProduct = new Product({
-          name,
-          description,
-          price,
-          category,
-          quantity,
-          image: imageUrl,
-        });
-
-        await newProduct.save();
-        res.json(newProduct);
-      } catch (err) {
-        console.error(err.message);
-        res.status(500).json({ msg: 'Server Error' });
-      }
-    });
+      await newProduct.save();
+      res.json(newProduct);
+    } catch (err) {
+      console.error(err.message);
+      res.status(500).json({ msg: 'Server Error' });
+    }
   });
 };
 
@@ -105,5 +89,18 @@ exports.deleteProductById = async (req, res) => {
   } catch (err) {
     console.error(err.message);
     res.status(500).json({msg: 'Server Error'});
+  }
+};
+
+exports.checkProductName = async (req, res) => {
+  const { name } = req.query;
+  if (!name) return res.status(400).json({ msg: 'Name is required' });
+
+  try {
+    const exists = await Product.findOne({ name: { $regex: `^${name}$`, $options: "i" } });
+    res.json({ exists: !!exists });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ msg: 'Server Error' });
   }
 };

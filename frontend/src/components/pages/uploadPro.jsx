@@ -19,38 +19,47 @@ const UploadPro = () => {
     setAnimate(true);
   }, []);
 
-  const onFinish = (values) => {
+  const onFinish = async (values) => {
     const token = sessionStorage.getItem("token");
+    const name = values.product.name;
 
-    const formData = new FormData();
-    formData.append("name", values.product.name);
-    formData.append("description", values.product.Description || "");
-    formData.append("category", values.product.category);
-    formData.append("price", values.product.price);
-    formData.append("quantity", values.product.quantity);
-    formData.append("image", values.product.image[0].originFileObj);
+    try {
+      // Step 1: Check if product name exists
+      const checkRes = await fetch(
+        `http://localhost:5001/api/products/check-name?name=${encodeURIComponent(name)}`
+      );
+      const checkData = await checkRes.json();
+      if (checkData.exists) {
+        return messageApi.error("A product with this name already exists.");
+      }
 
-    fetch("http://localhost:5001/api/products", {
-      method: "POST",
-      headers: {
-        "x-auth-token": token,
-      },
-      body: formData,
-    })
-      .then(async (res) => {
-        const data = await res.json().catch(() => ({}));
-        if (!res.ok) throw data;
-        return data;
-      })
-      .then((data) => {
-        messageApi.success("🎉 Product uploaded successfully!");
-        form.resetFields();
-        setPreviewUrl("");
-      })
-      .catch((err) => {
-        console.error("Upload error:", err);
-        messageApi.error(err.msg || "Failed to upload product.");
+      // Step 2: Upload product
+      const formData = new FormData();
+      formData.append("name", name);
+      formData.append("description", values.product.Description || "");
+      formData.append("category", values.product.category);
+      formData.append("price", values.product.price);
+      formData.append("quantity", values.product.quantity);
+      formData.append("image", values.product.image[0].originFileObj);
+
+      const res = await fetch("http://localhost:5001/api/products", {
+        method: "POST",
+        headers: {
+          "x-auth-token": token,
+        },
+        body: formData,
       });
+
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) throw data;
+
+      messageApi.success("Product uploaded successfully!");
+      form.resetFields();
+      setPreviewUrl("");
+    } catch (err) {
+      console.error("Upload error:", err);
+      messageApi.error(err.msg || "Failed to upload product.");
+    }
   };
 
   return (
@@ -89,7 +98,12 @@ const UploadPro = () => {
               <Form.Item
                 name={["product", "name"]}
                 label="Product name"
-                rules={[{ required: true, message: "Please enter the product name" }]}
+                rules={[
+                  {
+                    required: true,
+                    message: "Please enter the product name",
+                  },
+                ]}
               >
                 <Input />
               </Form.Item>
@@ -97,7 +111,12 @@ const UploadPro = () => {
               <Form.Item
                 name={["product", "Description"]}
                 label="Product Description"
-                rules={[{ required: true, message: "Please enter the description" }]}
+                rules={[
+                  {
+                    required: true,
+                    message: "Please enter the description",
+                  },
+                ]}
               >
                 <Input.TextArea />
               </Form.Item>
@@ -106,7 +125,7 @@ const UploadPro = () => {
                 <Form.Item
                   name={["product", "category"]}
                   label="Category"
-                  rules={[{ required: true, message: "Please enter the category" }]}
+                  rules={[{ required: true, message: "Please enter category" }]}
                   style={{
                     display: "inline-block",
                     width: "calc(50% - 8px)",
@@ -143,14 +162,26 @@ const UploadPro = () => {
                 name={["product", "quantity"]}
                 label="In Stock Quantity"
                 rules={[
-                  { required: true, message: "Please enter the quantity" },
+                  {
+                    required: true,
+                    message: "Please enter the quantity",
+                  },
                   {
                     validator: (_, value) => {
-                      if (value === undefined || value === null || value === "") {
+                      if (
+                        value === undefined ||
+                        value === null ||
+                        value === ""
+                      ) {
                         return Promise.reject("Please enter the quantity");
                       }
-                      if (!Number.isInteger(Number(value)) || value <= 0) {
-                        return Promise.reject("Quantity must be a positive integer");
+                      if (
+                        !Number.isInteger(Number(value)) ||
+                        Number(value) <= 0
+                      ) {
+                        return Promise.reject(
+                          "Quantity must be a positive integer"
+                        );
                       }
                       return Promise.resolve();
                     },
@@ -169,7 +200,9 @@ const UploadPro = () => {
                 label="Product Image"
                 valuePropName="fileList"
                 getValueFromEvent={(e) => e && e.fileList}
-                rules={[{ required: true, message: "Please upload an image" }]}
+                rules={[
+                  { required: true, message: "Please upload an image" },
+                ]}
                 style={{
                   display: "inline-block",
                   width: "calc(65% - 8px)",
@@ -185,7 +218,8 @@ const UploadPro = () => {
                     const fileObj = fileList[0]?.originFileObj;
                     if (fileObj) {
                       const reader = new FileReader();
-                      reader.onload = (e) => setPreviewUrl(e.target.result);
+                      reader.onload = (e) =>
+                        setPreviewUrl(e.target.result);
                       reader.readAsDataURL(fileObj);
                     } else {
                       setPreviewUrl("");

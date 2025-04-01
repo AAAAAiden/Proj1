@@ -5,6 +5,7 @@ const productController = require('../controllers/productController');
 const { checkToken, checkAdmin } = require('../middleware/authMiddleware');
 
 router.get('/', productController.listProducts);
+router.get('/check-name', productController.checkProductName);
 router.get('/:id', productController.getProductById);
 router.post('/', checkToken, checkAdmin, productController.createProduct);
 router.put('/:id', checkToken, checkAdmin, productController.editProductById);
