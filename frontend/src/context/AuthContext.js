@@ -1,33 +1,36 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
-import { message } from "antd";
-import { useNavigate } from "react-router-dom";
 
 const AuthContext = createContext();
-
 export const useAuth = () => useContext(AuthContext);
 
 export const AuthProvider = ({ children }) => {
   const [username, setUsername] = useState(null);
+  const [token, setToken] = useState(null);
 
   useEffect(() => {
-    const storedUsername = localStorage.getItem("username");
-    if (storedUsername) {
+    const storedUsername = sessionStorage.getItem("username");
+    const storedToken = sessionStorage.getItem("token");
+    if (storedUsername && storedToken) {
       setUsername(storedUsername);
+      setToken(storedToken);
     }
   }, []);
 
-  const signIn = (newUsername) => {
-    localStorage.setItem("username", newUsername);
-    setUsername(newUsername);
+  const signIn = (username, token) => {
+    sessionStorage.setItem("username", username);
+    sessionStorage.setItem("token", token);
+    setUsername(username);
+    setToken(token);
   };
 
   const signOut = () => {
-    localStorage.removeItem("username");
+    sessionStorage.clear();
     setUsername(null);
+    setToken(null);
   };
 
   return (
-    <AuthContext.Provider value={{ username, signIn, signOut }}>
+    <AuthContext.Provider value={{ username, token, signIn, signOut }}>
       {children}
     </AuthContext.Provider>
   );

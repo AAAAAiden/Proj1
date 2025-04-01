@@ -20,7 +20,7 @@ const UploadPro = () => {
   }, []);
 
   const onFinish = (values) => {
-    const token = localStorage.getItem("token");
+    const token = sessionStorage.getItem("token");
 
     const formData = new FormData();
     formData.append("name", values.product.name);
