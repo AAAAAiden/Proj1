@@ -9,8 +9,9 @@ import RecoverySent from "./components/Auth/RecoverySent";
 import UploadPro from "./components/pages/uploadPro";
 import DetailPage from "./components/pages/DetailPage"
 import {AdminRoute, PrivateRoute} from "./components/Auth/AdminRoute";
-import ProductCard from "./components/pages/ProductCard";
+
 import { CartProvider } from "./context/CartContext";
+import EditProduct from "./components/pages/EditPro";
 
 function App() {
   return (
@@ -44,6 +45,14 @@ function App() {
               element={
                 <AdminRoute>
                   <UploadPro />
+                </AdminRoute>
+              }
+            />
+            <Route
+              path="/products/:productId/edit"
+              element={
+                <AdminRoute>
+                  <EditProduct />
                 </AdminRoute>
               }
             />

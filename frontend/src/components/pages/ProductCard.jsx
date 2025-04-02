@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { Card, Input, Button } from 'antd';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useCart } from "../../context/CartContext";
 
 const ProductCard = ({ product }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [quantity, setQuantity] = useState(0);
   const { addToCart, updateQuantity, cartItems } = useCart();
+  const navigate = useNavigate();
 
   const handleAddToCartClick = (e) => {
     e.stopPropagation(); 
@@ -94,7 +95,10 @@ const ProductCard = ({ product }) => {
             disabled={quantity >= product.quantity}
             style={{ width: 32, padding: 0 }}
         >+</Button>
-        <Button style={{ flex: 1 }} disabled>Edit</Button>
+        <Button onClick={(e) => {
+            e.stopPropagation();
+            navigate(`/products/${product._id}/edit`);
+        }}style={{ flex: 1 }}>Edit</Button>
         </div>
     ) : (
         <div style={{ display: 'flex', gap: 8, marginTop: 12 }}>
@@ -105,7 +109,10 @@ const ProductCard = ({ product }) => {
         >
             Add
         </Button>
-        <Button style={{ width: '50%' }} disabled>Edit</Button>
+        <Button onClick={(e) => {
+            e.stopPropagation();
+            navigate(`/products/${product._id}/edit`);
+        }} style={{ width: '50%' }} >Edit</Button>
         </div>
     )}
     </Card>
