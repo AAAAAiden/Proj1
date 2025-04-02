@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { Card, Form, Input, Button, Typography, message } from "antd";
-import { updatePassword } from "./auth";
 import { useNavigate } from "react-router-dom";
 const { Title, Text } = Typography;
 
@@ -13,20 +12,8 @@ const UpdatePassword = () => {
     setAnimate(true);
   }, []);
 
-  const onFinish = (values) => {
-    updatePassword(values)
-      .then((data) => {
-        if (data.success) {
-            form.resetFields();
-            navigate("/recovery-sent");
-        } else {
-            messageApi.error(data.msg || "Something went wrong.");
-        }
-      })
-      .catch((error) => {
-        console.error("Update password error:", error);
-        messageApi.error("Password update failed. Please try again.");
-      });
+  const onFinish = () => {
+    navigate("/recovery-sent")
   };
 
   return (

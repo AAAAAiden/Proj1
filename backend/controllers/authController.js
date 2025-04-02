@@ -35,7 +35,7 @@ exports.signup = async (req, res) => {
     });
   } catch (err) {
     console.error(err.message);
-    res.status(500).send('Server Error');
+    res.status(500).send('Something wrong when generating tokens');
   }
 };
 
@@ -62,32 +62,11 @@ exports.signin = async (req, res) => {
 
     jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '1h' }, (err, token) => {
       if (err) throw err;
-      res.setHeader('x-auth-token', token);
       res.json({ token, username: user.username, role: user.role });
     });
   } catch (err) {
     console.error(err.message);
-    res.status(500).send('Server Error');
-  }
-};
-
-// Update password
-exports.updatePassword = async (req, res) => {
-  const { email } = req.body;
-
-  try {
-    // Optionally check if email exists
-    // const user = await User.findOne({ email });
-    // if (!user) return res.status(400).json({ msg: 'Email not found' });
-
-    // Just simulate sending an email
-    console.log(`Mock: Sent password recovery email to ${email}`);
-
-    // Respond with success
-    res.json({ success: true, msg: 'Recovery email sent' });
-  } catch (err) {
-    console.error(err.message);
-    res.status(500).send('Server Error');
+    res.status(500).send('Something wrong with generating tokens');
   }
 };
 
