@@ -13,7 +13,7 @@ const UploadPro = () => {
   const [messageApi, contextHolder] = message.useMessage();
   const [animate, setAnimate] = useState(false);
   const [previewUrl, setPreviewUrl] = useState("");
-  const [loading, setLoading] = useState(false); // 👈 loading state added
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -23,7 +23,7 @@ const UploadPro = () => {
   const onFinish = async (values) => {
     const token = sessionStorage.getItem("token");
     const name = values.product.name;
-    setLoading(true); // 👈 show spinner
+    setLoading(true);
 
     try {
       const checkRes = await fetch(
@@ -60,7 +60,7 @@ const UploadPro = () => {
       console.error("Upload error:", err);
       messageApi.error(err.msg || "Failed to upload product.");
     } finally {
-      setLoading(false); // 👈 hide spinner
+      setLoading(false);
     }
   };
 

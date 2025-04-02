@@ -12,7 +12,7 @@ const SignIn = () => {
   const [messageApi, contextHolder] = message.useMessage();
   const [animate, setAnimate] = useState(false);
   const navigate = useNavigate();
-  const { signIn:setAuthUser } = useAuth();
+  const { signIn:setAuthUser, username } = useAuth();
 
   useEffect(() => {
     setAnimate(true);
@@ -29,6 +29,7 @@ const SignIn = () => {
           form.resetFields();
           sessionStorage.setItem("token", data.token);
           sessionStorage.setItem("role", data.role); 
+          sessionStorage.setItem("username", data.username); 
           setTimeout(() => {
             navigate("/products");
           }, 1500);          
