@@ -8,6 +8,7 @@ const ProductCard = ({ product }) => {
   const [quantity, setQuantity] = useState(0);
   const { addToCart, updateQuantity, cartItems } = useCart();
   const navigate = useNavigate();
+  const role = sessionStorage.getItem("role");
 
   const handleAddToCartClick = (e) => {
     e.stopPropagation(); 
@@ -62,7 +63,6 @@ const ProductCard = ({ product }) => {
     <Card
     hoverable
     style={{ width: 300, height: 400 }}
-    bodyStyle={{ padding: 10 }}
     >
     <Link to={`/products/${product._id}`} style={{ textDecoration: 'none' }}>
         <div style={{ display: 'flex', justifyContent: 'center', marginTop: 10 }}>
@@ -77,44 +77,59 @@ const ProductCard = ({ product }) => {
         />
         </div>
         <div style={{ textAlign: 'left', marginTop: 8 }}>
-        <div style={{ fontSize: '16px', fontWeight: 'bold' }}>${product.price}</div>
-        <div style={{ fontSize: '13px', color: '#888' }}>{product.name}</div>
+        <div style={{ fontSize: '16px', fontWeight: 'bold', color: 'black' }}>${product.price}</div>
+        <div style={{ fontSize: '13px', color: 'black' }}>{product.name}</div>
         </div>
     </Link>
 
     {isEditing ? (
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 12 }}>
-        <Button onClick={handleDecrement} style={{ width: 32, padding: 0 }}>−</Button>
+    <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 12 }}>
+        <Button onClick={handleDecrement} style={{ width: 64, padding: 0 }}>−</Button>
         <Input
             value={quantity}
             onChange={handleQuantityChange}
-            style={{ textAlign: 'center', width: 60 }}
+            style={{ textAlign: 'center', width: 120 }}
         />
         <Button
             onClick={handleIncrement}
             disabled={quantity >= product.quantity}
-            style={{ width: 32, padding: 0 }}
+            style={{ width: 64, padding: 0 }}
         >+</Button>
-        <Button onClick={(e) => {
+        {role === "admin" && (
+        <Button
+            onClick={(e) => {
             e.stopPropagation();
             navigate(`/products/${product._id}/edit`);
-        }}style={{ flex: 1 }}>Edit</Button>
-        </div>
+            }}
+            style={{ flex: 1 }}
+        >
+            Edit
+        </Button>
+        )}
+    </div>
     ) : (
-        <div style={{ display: 'flex', gap: 8, marginTop: 12 }}>
+    <div style={{ display: 'flex', gap: 8, marginTop: 12 }}>
         <Button
             type="primary"
-            style={{ width: '50%' }}
+            style={{ width: role === "admin" ? "50%" : "100%" }}
             onClick={handleAddToCartClick}
         >
-            Add
+        Buy
         </Button>
-        <Button onClick={(e) => {
+        {role === "admin" && (
+        <Button
+            onClick={(e) => {
             e.stopPropagation();
             navigate(`/products/${product._id}/edit`);
-        }} style={{ width: '50%' }} >Edit</Button>
-        </div>
+            }}
+            style={{ width: "50%" }}
+        >
+            Edit
+        </Button>
+        )}
+    </div>
     )}
+
     </Card>
   );
 };
