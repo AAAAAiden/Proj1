@@ -1,15 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import { Card, Input, Button } from 'antd';
 import { Link } from 'react-router-dom';
+import { useCart } from "../../context/CartContext";
 
 const ProductCard = ({ product }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [quantity, setQuantity] = useState(0);
+  const { addToCart, updateQuantity, cartItems } = useCart();
 
   const handleAddToCartClick = (e) => {
     e.stopPropagation(); 
     setIsEditing(true);
     setQuantity(1);
+    addToCart(product, 1);
   };
 
   const handleQuantityChange = (e) => {
@@ -17,30 +20,42 @@ const ProductCard = ({ product }) => {
     if (isNaN(value) || value <= 0) {
       setIsEditing(false);
       setQuantity(0);
+      updateQuantity(product._id, 0); 
     } else if (value > product.quantity) {
       setQuantity(product.quantity);
+      updateQuantity(product._id, product.quantity);
     } else {
       setQuantity(value);
+      updateQuantity(product._id, value);
     }
   };
 
   const handleIncrement = () => {
     if (quantity < product.quantity) {
-        setQuantity((prev) => prev+1);
+      const newVal = quantity + 1;
+      setQuantity(newVal);
+      updateQuantity(product._id, newVal); 
     }
   };
 
   const handleDecrement = () => {
-    setQuantity((prev) => {
-      const newVal = Math.max(0, prev - 1);
-      if (newVal === 0) setIsEditing(false);
-      return newVal;
-    });
+    const newVal = Math.max(0, quantity - 1);
+    setQuantity(newVal);
+    updateQuantity(product._id, newVal); 
+    if (newVal === 0) setIsEditing(false);
   };
 
+  // make sure each time when the cart is updated, we match the productcard UI
   useEffect(() => {
-    console.log('Quantity changed:', quantity);
-  }, [quantity]);
+    const match = cartItems.find(item => item._id === product._id);
+    if (match && match.quantity > 0) {
+      setQuantity(match.quantity);
+      setIsEditing(true);
+    } else {
+      setQuantity(0);
+      setIsEditing(false);
+    }
+  }, [cartItems, product._id]);
 
   return (
     <Link to={`/detail-page/${product.id}`} style={{ textDecoration: 'none' }}>
@@ -75,15 +90,23 @@ const ProductCard = ({ product }) => {
             onChange={handleQuantityChange}
             style={{ textAlign: 'center', width: 60 }}
           />
-          <Button onClick={handleIncrement} disabled={quantity>=product.quantity} style={{ width: 32, padding: 0 }}>+</Button>
-          <Button style={{ flex: 1 }}>Edit</Button>
+          <Button
+            onClick={handleIncrement}
+            disabled={quantity >= product.quantity}
+            style={{ width: 32, padding: 0 }}
+          >+</Button>
+          <Button style={{ flex: 1 }} disabled>Edit</Button>
         </div>
       ) : (
         <div style={{ display: 'flex', gap: 8 }}>
-          <Button type="primary" style={{ width: '50%' }} onClick={handleAddToCartClick}>
+          <Button
+            type="primary"
+            style={{ width: '50%' }}
+            onClick={handleAddToCartClick}
+          >
             Add
           </Button>
-          <Button style={{ width: '50%' }}>Edit</Button>
+          <Button style={{ width: '50%' }} disabled>Edit</Button>
         </div>
       )}
     </Card>
@@ -92,5 +115,3 @@ const ProductCard = ({ product }) => {
 };
 
 export default ProductCard;
-
-

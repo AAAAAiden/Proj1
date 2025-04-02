@@ -18,7 +18,7 @@ const SignUp = () => {
     signUp(values)
       .then((data) => {
         if (data.token) {
-          messageApi.success("🎉 Account created successfully!");
+          messageApi.success("Account created successfully!");
           form.resetFields();
         } else {
             if (data.msg === "Username or email already exists") {

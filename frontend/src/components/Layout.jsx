@@ -10,11 +10,13 @@ import {
   FacebookOutlined,
 } from "@ant-design/icons";
 import { useAuth } from "../context/AuthContext";
+import { useCart } from "../context/CartContext";
 
 const Layout = () => {
   const { username, token, signOut, loading } = useAuth();
   const navigate = useNavigate();
   const [messageApi, contextHolder] = message.useMessage();
+  const { totalPrice } = useCart();
 
   // Prevent user from being null before session loads
   if (loading) {
@@ -35,32 +37,33 @@ const Layout = () => {
       <div className="layout-container">
         <header className="app-header">
           <div className="header-left">
-            Management <span>Chuwa</span>
+            <div className="chuwa-title">Management <span>Chuwa</span></div>
+            <div className="user-auth">
+                {username ? (
+                    <span style={{ color: "#fff", cursor: "pointer" }} onClick={handleSignOut}>
+                    <UserOutlined style={{ marginRight: 4 }} />
+                    {username} | Sign Out
+                    </span>
+                ) : (
+                    <Link to="/signin" style={{ color: "#fff" }}>
+                    <UserOutlined style={{ marginRight: 4 }} />
+                    Sign In
+                    </Link>
+                )}
+            </div>
           </div>
-          <Input
-            className="search-input"
-            placeholder="Search"
-            prefix={<SearchOutlined />}
-            disabled={!token}
-          />
+          <div className="seach-bar">
+            <Input
+                className="search-input"
+                placeholder="Search"
+                prefix={<SearchOutlined />}
+                disabled={!token}
+            />
+          </div>
           <div className="header-right">
-            {username ? (
-              <span
-                style={{ color: "#fff", cursor: "pointer" }}
-                onClick={handleSignOut}
-              >
-                <UserOutlined style={{ marginRight: 4 }} />
-                {username} | Sign Out
-              </span>
-            ) : (
-              <Link to="/signin" style={{ color: "#fff" }}>
-                <UserOutlined style={{ marginRight: 4 }} />
-                Sign In
-              </Link>
-            )}
-            <div className="header-icon-link">
+            <div className="shopping-cart">
               <ShoppingCartOutlined className="icon-left" />
-              $0.00
+              ${totalPrice.toFixed(2)}
             </div>
           </div>
         </header>
