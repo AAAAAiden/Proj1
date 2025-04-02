@@ -71,25 +71,6 @@ exports.signin = async (req, res) => {
   }
 };
 
-// Update password
-exports.updatePassword = async (req, res) => {
-  const { email } = req.body;
-
-  try {
-    // Optionally check if email exists
-    // const user = await User.findOne({ email });
-    // if (!user) return res.status(400).json({ msg: 'Email not found' });
-
-    // Just simulate sending an email
-    console.log(`Mock: Sent password recovery email to ${email}`);
-
-    // Respond with success
-    res.json({ success: true, msg: 'Recovery email sent' });
-  } catch (err) {
-    console.error(err.message);
-    res.status(500).send('Server Error');
-  }
-};
 
 // Check availability for username/email
 exports.checkAvailability = async (req, res) => {
