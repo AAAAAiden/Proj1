@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { Card, Input, Button } from 'antd';
+import { Link } from 'react-router-dom';
 
 const ProductCard = ({ product }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [quantity, setQuantity] = useState(0);
 
-  const handleAddToCartClick = () => {
+  const handleAddToCartClick = (e) => {
+    e.stopPropagation(); 
     setIsEditing(true);
     setQuantity(1);
   };
@@ -41,6 +43,7 @@ const ProductCard = ({ product }) => {
   }, [quantity]);
 
   return (
+    <Link to={`/detail-page/${product.id}`} style={{ textDecoration: 'none' }}>
     <Card
       hoverable
       style={{ width: 300, height: 400 }}
@@ -84,6 +87,7 @@ const ProductCard = ({ product }) => {
         </div>
       )}
     </Card>
+    </Link>
   );
 };
 
