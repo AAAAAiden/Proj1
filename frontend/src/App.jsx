@@ -7,41 +7,17 @@ import Layout from './components/Layout';
 import Products from './components/pages/Products';
 import RecoverySent from "./components/Auth/RecoverySent";
 import UploadPro from "./components/pages/uploadPro";
-<<<<<<< HEAD
 import AdminRoute from "./components/Auth/AdminRoute";
 import ProductCard from "./components/pages/ProductCard"
 import DetailPage from "./components/pages/DetailPage"
 
-=======
 import {AdminRoute, PrivateRoute} from "./components/Auth/AdminRoute";
 import ProductCard from "./components/pages/ProductCard";
 import { CartProvider } from "./context/CartContext";
->>>>>>> 472e2624887314afdbbfa2e4917be97248ad318b
 
 function App() {
   return (
     <Router>
-<<<<<<< HEAD
-      <Routes>
-        <Route path="/" element={<Layout />}>
-          <Route index element={<Navigate to="/signin" replace />} />
-          <Route path="/signup" element={<SignUp />} />
-          <Route path="/signin" element={<SignIn />} />
-          <Route path='/updatepassword' element={<UpdatePassword />} />
-          <Route path="/products" element={<Products />} />
-          <Route path="/recovery-sent" element={<RecoverySent />} />          
-          <Route path="/detail-page" element={< DetailPage/>}/>
-          <Route
-            path="/productupload"
-            element={
-              <AdminRoute>
-                <UploadPro />
-              </AdminRoute>
-            }
-          />
-        </Route>
-      </Routes>
-=======
       <CartProvider>
         <Routes>
           <Route path="/" element={<Layout />}>
@@ -57,6 +33,14 @@ function App() {
                 </PrivateRoute>
               }
             />
+            <Route
+              path="/detail-page/:productId"
+              element={
+                <PrivateRoute>
+                  <DetailPage />
+                </PrivateRoute>
+              }
+            />
             <Route path="/recovery-sent" element={<RecoverySent />} />          
             <Route
               path="/productupload"
@@ -69,7 +53,6 @@ function App() {
           </Route>
         </Routes>
       </CartProvider>
->>>>>>> 472e2624887314afdbbfa2e4917be97248ad318b
     </Router>
   );
 }
