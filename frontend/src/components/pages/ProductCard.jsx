@@ -1,13 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { Card, Input, Button } from 'antd';
+import { Link, useNavigate } from 'react-router-dom';
 import { useCart } from "../../context/CartContext";
 
 const ProductCard = ({ product }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [quantity, setQuantity] = useState(0);
   const { addToCart, updateQuantity, cartItems } = useCart();
+  const navigate = useNavigate();
 
-  const handleAddToCartClick = () => {
+  const handleAddToCartClick = (e) => {
+    e.stopPropagation(); 
     setIsEditing(true);
     setQuantity(1);
     addToCart(product, 1);
@@ -57,55 +60,61 @@ const ProductCard = ({ product }) => {
 
   return (
     <Card
-      hoverable
-      style={{ width: 300, height: 400 }}
-      bodyStyle={{ padding: 10 }}
-      cover={
+    hoverable
+    style={{ width: 300, height: 400 }}
+    bodyStyle={{ padding: 10 }}
+    >
+    <Link to={`/products/${product._id}`} style={{ textDecoration: 'none' }}>
         <div style={{ display: 'flex', justifyContent: 'center', marginTop: 10 }}>
-          <img
+        <img
             src={product.image}
             alt={product.name}
             style={{ height: '260px', width: '260px', objectFit: 'cover' }}
             onError={(e) => {
-              e.target.onerror = null;
-              e.target.src = 'https://via.placeholder.com/260x260.png?text=No+Image';
+            e.target.onerror = null;
+            e.target.src = 'https://via.placeholder.com/260x260.png?text=No+Image';
             }}
-          />
+        />
         </div>
-      }
-    >
-      <div style={{ textAlign: 'left', marginBottom: 8 }}>
+        <div style={{ textAlign: 'left', marginTop: 8 }}>
         <div style={{ fontSize: '16px', fontWeight: 'bold' }}>${product.price}</div>
         <div style={{ fontSize: '13px', color: '#888' }}>{product.name}</div>
-      </div>
+        </div>
+    </Link>
 
-      {isEditing ? (
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-          <Button onClick={handleDecrement} style={{ width: 32, padding: 0 }}>−</Button>
-          <Input
+    {isEditing ? (
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 12 }}>
+        <Button onClick={handleDecrement} style={{ width: 32, padding: 0 }}>−</Button>
+        <Input
             value={quantity}
             onChange={handleQuantityChange}
             style={{ textAlign: 'center', width: 60 }}
-          />
-          <Button
+        />
+        <Button
             onClick={handleIncrement}
             disabled={quantity >= product.quantity}
             style={{ width: 32, padding: 0 }}
-          >+</Button>
-          <Button style={{ flex: 1 }} disabled>Edit</Button>
+        >+</Button>
+        <Button onClick={(e) => {
+            e.stopPropagation();
+            navigate(`/products/${product._id}/edit`);
+        }}style={{ flex: 1 }}>Edit</Button>
         </div>
-      ) : (
-        <div style={{ display: 'flex', gap: 8 }}>
-          <Button
+    ) : (
+        <div style={{ display: 'flex', gap: 8, marginTop: 12 }}>
+        <Button
             type="primary"
             style={{ width: '50%' }}
             onClick={handleAddToCartClick}
-          >
+        >
             Add
-          </Button>
-          <Button style={{ width: '50%' }} disabled>Edit</Button>
+        </Button>
+        <Button onClick={(e) => {
+            e.stopPropagation();
+            navigate(`/products/${product._id}/edit`);
+        }} style={{ width: '50%' }} >Edit</Button>
         </div>
-      )}
+    )}
     </Card>
   );
 };
