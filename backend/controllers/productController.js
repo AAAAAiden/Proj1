@@ -3,35 +3,30 @@ const upload = require('../utils/s3Config');
 
 // Create product
 exports.createProduct = async (req, res) => {
-  upload.single('image')(req, res, async (err) => {
-    if (err) {
-      return res.status(400).json({ msg: 'Error uploading image: ' + err.message });
-    }
-
+  try {
     const { name, description, price, category, quantity } = req.body;
-    const imageUrl = req.file ? req.file.location : null;
 
-    if (!imageUrl) {
+    if (!req.file || !req.file.location) {
       return res.status(400).json({ msg: 'No image uploaded' });
     }
 
-    try {
-      const newProduct = new Product({
-        name,
-        description,
-        price,
-        category,
-        quantity,
-        image: imageUrl,
-      });
+    const imageUrl = req.file.location;
 
-      await newProduct.save();
-      res.json(newProduct);
-    } catch (err) {
-      console.error(err.message);
-      res.status(500).json({ msg: 'Server Error' });
-    }
-  });
+    const newProduct = new Product({
+      name,
+      description,
+      price,
+      category,
+      quantity,
+      image: imageUrl,
+    });
+
+    await newProduct.save();
+    res.json(newProduct);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).json({ msg: 'Server Error' });
+  }
 };
 
 
@@ -63,18 +58,32 @@ exports.getProductById = async (req, res) => {
 // Edit product by ID
 exports.editProductById = async (req, res) => {
   try {
+    const updatedFields = {
+      name: req.body.name,
+      description: req.body.description,
+      category: req.body.category,
+      price: req.body.price,
+      quantity: req.body.quantity,
+    };
+
+    if (req.file && req.file.location) {
+      updatedFields.image = req.file.location;
+    }
+
     const updatedProduct = await Product.findByIdAndUpdate(
       req.params.id,
-      req.body,
+      updatedFields,
       { new: true }
     );
+
     if (!updatedProduct) {
       return res.status(404).json({ msg: 'Product not found' });
     }
+
     res.json(updatedProduct);
   } catch (err) {
     console.error(err.message);
-    res.status(500).json({msg: 'Server Error'});
+    res.status(500).json({ msg: 'Server Error' });
   }
 };
 
