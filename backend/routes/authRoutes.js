@@ -7,6 +7,5 @@ const { checkToken } = require('../middleware/authMiddleware');
 router.get('/check-availability', authController.checkAvailability);
 router.post('/signup', authController.signup);
 router.post('/signin', authController.signin);
-router.put('/update-password', authController.updatePassword);
 
 module.exports = router;

@@ -14,19 +14,7 @@ const UpdatePassword = () => {
   }, []);
 
   const onFinish = (values) => {
-    updatePassword(values)
-      .then((data) => {
-        if (data.success) {
-            form.resetFields();
-            navigate("/recovery-sent");
-        } else {
-            messageApi.error(data.msg || "Something went wrong.");
-        }
-      })
-      .catch((error) => {
-        console.error("Update password error:", error);
-        messageApi.error("Password update failed. Please try again.");
-      });
+    navigate("/recovery-sent");
   };
 
   return (
