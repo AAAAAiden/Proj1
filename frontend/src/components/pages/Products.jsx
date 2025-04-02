@@ -25,8 +25,6 @@ const Products = () => {
       .catch((err) => console.error("Error fetching products:", err));
   }, []);
 
-
-  console.log('continue');
   const sortedProducts = [...products].sort((a, b) => {
     if (sortOrder === "newest") return new Date(b.createdAt) - new Date(a.createdAt);
     if (sortOrder === "oldest") return new Date(a.createdAt) - new Date(b.createdAt);

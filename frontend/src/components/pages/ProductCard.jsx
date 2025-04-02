@@ -43,7 +43,7 @@ const ProductCard = ({ product }) => {
     if (newVal === 0) setIsEditing(false);
   };
 
-  // make sure each time the cart is updated, we match the productcard UI
+  // make sure each time when the cart is updated, we match the productcard UI
   useEffect(() => {
     const match = cartItems.find(item => item._id === product._id);
     if (match && match.quantity > 0) {
