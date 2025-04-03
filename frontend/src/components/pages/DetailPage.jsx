@@ -6,8 +6,8 @@ import { addToCart, updateQuantity } from '../../store/cartSlice';
 
 const { Title, Text } = Typography;
 
-const DetailPage = () => {
-  const { productId } = useParams();
+const DetailPage = ({id}) => {
+  const { productId } = id;
   const [product, setProduct] = useState(null);
   const [messageApi, contextHolder] = message.useMessage();
   const dispatch = useDispatch();
