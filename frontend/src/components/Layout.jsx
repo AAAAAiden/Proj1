@@ -10,17 +10,16 @@ import {
   FacebookOutlined,
 } from "@ant-design/icons";
 import { useAuth } from "../context/AuthContext";
-import { useCart } from "../context/CartContext";
+import { useSelector } from "react-redux";
 
 const Layout = () => {
   const { username, token, signOut, loading } = useAuth();
   const navigate = useNavigate();
   const [messageApi, contextHolder] = message.useMessage();
-  const { totalPrice } = useCart();
+  const totalPrice = useSelector((state) => state.cart.total);
 
-  // Prevent user from being null before session loads
   if (loading) {
-    return null; 
+    return null;
   }
 
   const handleSignOut = () => {
@@ -39,27 +38,29 @@ const Layout = () => {
           <div className="header-left">
             <div className="chuwa-title">Management <span>Chuwa</span></div>
             <div className="user-auth">
-                {username ? (
-                    <span style={{ color: "#fff", cursor: "pointer" }} onClick={handleSignOut}>
-                    <UserOutlined style={{ marginRight: 4 }} />
-                    {username} | Sign Out
-                    </span>
-                ) : (
-                    <Link to="/signin" style={{ color: "#fff" }}>
-                    <UserOutlined style={{ marginRight: 4 }} />
-                    Sign In
-                    </Link>
-                )}
+              {username ? (
+                <span style={{ color: "#fff", cursor: "pointer" }} onClick={handleSignOut}>
+                  <UserOutlined style={{ marginRight: 4 }} />
+                  {username} | Sign Out
+                </span>
+              ) : (
+                <Link to="/signin" style={{ color: "#fff" }}>
+                  <UserOutlined style={{ marginRight: 4 }} />
+                  Sign In
+                </Link>
+              )}
             </div>
           </div>
+
           <div className="seach-bar">
             <Input
-                className="search-input"
-                placeholder="Search"
-                prefix={<SearchOutlined />}
-                disabled={!token}
+              className="search-input"
+              placeholder="Search"
+              prefix={<SearchOutlined />}
+              disabled={!token}
             />
           </div>
+
           <div className="header-right">
             <div className="shopping-cart">
               <ShoppingCartOutlined className="icon-left" />

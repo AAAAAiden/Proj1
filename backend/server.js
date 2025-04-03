@@ -3,7 +3,7 @@ const dotenv = require('dotenv');
 const connectDB = require('./config/db');
 const authRoutes = require('./routes/authRoutes');
 const productRoutes = require('./routes/productRoutes');
-const errorHandler = require('./utils/errorHandler');
+const errorHandler = require('./middleware/errorHandler')
 const cors = require('cors'); 
 
 dotenv.config();
@@ -15,7 +15,6 @@ app.use(express.json());
 
 app.use('/api/auth', authRoutes);
 app.use('/api/products', productRoutes);
-app.use('/uploads', express.static('uploads'));
 
 app.use(errorHandler);
 

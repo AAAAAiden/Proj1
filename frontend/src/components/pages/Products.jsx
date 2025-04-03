@@ -3,16 +3,17 @@ import { Typography, Flex, Button, Dropdown } from "antd";
 import { DownOutlined } from "@ant-design/icons";
 import ProductCard from "./ProductCard";
 import { useNavigate } from "react-router-dom";
-import { useCart } from "../../context/CartContext";
+import { useDispatch } from 'react-redux';
+import { clearCart } from '../../store/cartSlice';
 
 const { Title } = Typography;
 
 const Products = () => {
   const [products, setProducts] = useState([]);
+  const [sortOrder, setSortOrder] = useState("oldest");
   const navigate = useNavigate();
   const role = sessionStorage.getItem("role");
-  const [sortOrder, setSortOrder] = useState("oldest");
-  const { clearCart } = useCart();
+  const dispatch = useDispatch();
 
   useEffect(() => {
     fetch("http://localhost:5001/api/products", {
@@ -44,6 +45,10 @@ const Products = () => {
     { key: "valuable", label: "Price: high to low" },
   ];
 
+  const handleClearCart = () => {
+    dispatch(clearCart());
+  };
+
   return (
     <div style={{ padding: "20px", height: "100%", display: "flex", flexDirection: "column" }}>
       <Flex justify="space-between" align="center" style={{ marginBottom: 24 }}>
@@ -63,7 +68,7 @@ const Products = () => {
               Upload New Product
             </Button>
           )}
-          <Button danger onClick={clearCart}>
+          <Button danger onClick={handleClearCart}>
             Delete Cart
           </Button>
         </Flex>
