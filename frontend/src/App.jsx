@@ -13,70 +13,71 @@ import EditProduct from "./components/pages/EditPro";
 import { Provider } from 'react-redux';
 import { store } from './store';
 import HardcodedCardCart from './components/pages/Cart/HardcodeCard'
-
+import { DrawerProvider } from './components/pages/Cart/CartPage';
 import CardCart from './components/pages/Cart/CardInCart';
-
-// function App() {
-//   return (
-//     <Provider store={store}>
-//       <Router>
-//         <Routes>
-//           <Route path="/" element={<Layout />}>
-//             <Route index element={<Navigate to="/signin" replace />} />
-//             <Route path="/signup" element={<SignUp />} />
-//             <Route path="/signin" element={<SignIn />} />
-//             <Route path='/updatepassword' element={<UpdatePassword />} />
-//             <Route
-//               path="/products"
-//               element={
-//                 <PrivateRoute>
-//                   <Products />
-//                 </PrivateRoute>
-//               }
-//             />
-//             <Route
-//               path="/products/:productId"
-//               element={
-//                 <PrivateRoute>
-//                   <DetailPage />
-//                 </PrivateRoute>
-//               }
-//             />
-//             <Route path="/recovery-sent" element={<RecoverySent />} />          
-//             <Route
-//               path="/productupload"
-//               element={
-//                 <AdminRoute>
-//                   <UploadPro />
-//                 </AdminRoute>
-//               }
-//             />
-//             <Route
-//               path="/products/:productId/edit"
-//               element={
-//                 <AdminRoute>
-//                   <EditProduct />
-//                 </AdminRoute>
-//               }
-//             />
-//           </Route>
-//         </Routes>
-//       </Router>
-//     </Provider>
-//   );
-// }
 
 
 function App() {
   return (
-    <Router>
-      <Routes>
-        {/* Define a route where productId is a URL parameter */}
-        <Route path="/" element={<HardcodedCardCart />} />
-      </Routes>
-    </Router>
+    <Provider store={store}>
+      <Router>
+        <Routes>
+          <Route path="/" element={<Layout />}>
+            <Route index element={<Navigate to="/signin" replace />} />
+            <Route path="/signup" element={<SignUp />} />
+            <Route path="/signin" element={<SignIn />} />
+            <Route path='/updatepassword' element={<UpdatePassword />} />
+            <Route
+              path="/products"
+              element={
+                <PrivateRoute>
+                  <Products />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/products/:productId"
+              element={
+                <PrivateRoute>
+                  <DetailPage />
+                </PrivateRoute>
+              }
+            />
+            <Route path="/recovery-sent" element={<RecoverySent />} />          
+            <Route
+              path="/productupload"
+              element={
+                <AdminRoute>
+                  <UploadPro />
+                </AdminRoute>
+              }
+            />
+            <Route
+              path="/products/:productId/edit"
+              element={
+                <AdminRoute>
+                  <EditProduct />
+                </AdminRoute>
+              }
+            />
+          </Route>
+        </Routes>
+      </Router>
+    </Provider>
   );
 }
+
+
+// function App() {
+//   return (
+//     <Router>
+//       <Routes>
+//         {/* Define a route where productId is a URL parameter */}
+//         <Route path="/" element={<HardcodedCardCart />} />
+//       </Routes>
+//     </Router>
+//   );
+// }
 
 
 export default App;

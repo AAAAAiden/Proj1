@@ -6,8 +6,11 @@ import { addToCart, updateQuantity } from '../../store/cartSlice';
 
 const { Title, Text } = Typography;
 
-const DetailPage = ({id}) => {
-  const { productId } = id;
+
+
+
+const DetailPage = () => {
+  const { productId } = useParams();
   const [product, setProduct] = useState(null);
   const [messageApi, contextHolder] = message.useMessage();
   const dispatch = useDispatch();
@@ -26,7 +29,10 @@ const DetailPage = ({id}) => {
       },
     })
       .then((res) => res.json())
-      .then((data) => setProduct(data))
+      .then((data) => {
+        console.log(data)
+        setProduct(data)
+      })
       .catch((err) => {
         console.error("Error loading product:", err);
         messageApi.error("Failed to load product details.");
