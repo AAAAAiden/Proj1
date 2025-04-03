@@ -143,10 +143,10 @@ const Layout = () => {
             <Row className="total-line">Estimated total</Row>
           </Col>
           <Col span={12}>
-            <Row> <div className="total-line right-align">{totalPrice.toFixed(2)}</div></Row>
-            <Row><div className="total-line right-align">{(totalPrice * 0.1).toFixed(2)}</div></Row>
-            <Row><div className="total-line right-align">{discount.toFixed(2)}</div></Row>
-            <Row><div className="total-line right-align">{(totalPrice * 1.1 - discount).toFixed(2)}</div></Row>
+            <Row> <div className="total-line right-align">${totalPrice.toFixed(2)}</div></Row>
+            <Row><div className="total-line right-align">${(totalPrice * 0.1).toFixed(2)}</div></Row>
+            <Row><div className="total-line right-align">${discount.toFixed(2)}</div></Row>
+            <Row><div className="total-line right-align">${(totalPrice * 1.1 - discount).toFixed(2)}</div></Row>
           </Col>
         </Row>
         <Row>
