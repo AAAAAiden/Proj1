@@ -1,13 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { Card, Form, Input, Button, Typography, message } from "antd";
-import { updatePassword } from "./auth";
 import { useNavigate } from "react-router-dom";
 const { Title, Text } = Typography;
 
 const UpdatePassword = () => {
   const [form] = Form.useForm();
   const [animate, setAnimate] = useState(false);
-  const [messageApi, contextHolder] = message.useMessage();
+  const [contextHolder] = message.useMessage();
   const navigate = useNavigate();
   useEffect(() => {
     setAnimate(true);

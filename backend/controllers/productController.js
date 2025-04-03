@@ -1,5 +1,4 @@
 const Product = require('../models/product');
-const upload = require('../utils/s3Config');
 
 // Create product
 exports.createProduct = async (req, res) => {
@@ -24,8 +23,8 @@ exports.createProduct = async (req, res) => {
     await newProduct.save();
     res.json(newProduct);
   } catch (err) {
-    console.error(err.message);
-    res.status(500).json({ msg: 'Server Error' });
+    console.error('controllers/productController.js: ', err.message);
+    res.status(500).json({ msg: 'Server Error when create new product' });
   }
 };
 
@@ -36,8 +35,8 @@ exports.listProducts = async (req, res) => {
     const products = await Product.find();
     res.json(products);
   } catch (err) {
-    console.error(err.message);
-    res.status(500).json({msg: 'Server Error'});
+    console.error('controllers/productController.js: ', err.message);
+    res.status(500).json({msg: 'Server Error when listing all products'});
   }
 };
 
@@ -82,8 +81,8 @@ exports.editProductById = async (req, res) => {
 
     res.json(updatedProduct);
   } catch (err) {
-    console.error(err.message);
-    res.status(500).json({ msg: 'Server Error' });
+    console.error('controllers/productController.js: ', err.message);
+    res.status(500).json({ msg: 'Server Error when editing product' });
   }
 };
 
@@ -109,7 +108,7 @@ exports.checkProductName = async (req, res) => {
     const exists = await Product.findOne({ name: { $regex: `^${name}$`, $options: "i" } });
     res.json({ exists: !!exists });
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ msg: 'Server Error' });
+    console.error('controllers/productController.js: ', err);
+    res.status(500).json({ msg: 'Server Error when checking name' });
   }
 };
