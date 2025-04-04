@@ -25,8 +25,15 @@ const cartSlice = createSlice({
     },
     updateQuantity(state, action) {
       const { _id, quantity } = action.payload;
-      const item = state.items.find(i => i._id === _id);
-      if (item) item.quantity = quantity;
+      const itemid = state.items.find(i => i._id === _id);
+      if (itemid !== -1) {
+        if (quantity <= 0) {
+          state.items.splice(itemid, 1);
+        } else {
+          state.items[itemid].quantity = quantity;
+        }
+      }
+    
       state.total = calculateTotal(state.items);
     },
     removeFromCart(state, action) {

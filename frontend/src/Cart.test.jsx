@@ -8,17 +8,17 @@ import { BrowserRouter as Router } from 'react-router-dom';
 // Create a mock Redux store
 const mockStore = configureStore([]);
 
-// Mock react-router-dom hooks
+// Mock react-router-dom hooks (if needed)
 jest.mock('react-router-dom', () => ({
-  useParams: () => ({ productId: '123' }),
+  ...jest.requireActual('react-router-dom'),
   useNavigate: () => jest.fn(),
 }));
 
-// Optionally, you may also mock the antd message hook if needed
+// Mock antd message
 jest.mock('antd', () => {
-  const antd = jest.requireActual('antd');
+  const actualAntd = jest.requireActual('antd');
   return {
-    ...antd,
+    ...actualAntd,
     message: {
       useMessage: () => [jest.fn(), <div data-testid="messageHolder" />],
     },
@@ -28,71 +28,70 @@ jest.mock('antd', () => {
 describe('CardCart Component Layout', () => {
   let store;
 
+  const testProduct = {
+    _id: '123',
+    name: 'Test Product',
+    image: 'test.jpg',
+    price: 99,
+    quantity: 10,
+  };
+
   beforeEach(() => {
     store = mockStore({
-      cart: { items: [] },
+      cart: { items: [ { ...testProduct, quantity: 1 } ] },
     });
-    // Mock fetch to return dummy product data
-    global.fetch = jest.fn(() =>
-      Promise.resolve({
-        json: () =>
-          Promise.resolve({
-            _id: '123',
-            name: 'Test Product',
-            image: 'test.jpg',
-            price: 99,
-            quantity: 10,
-          }),
-      })
-    );
   });
 
-  afterEach(() => {
-    jest.restoreAllMocks();
-  });
-
-  it('renders layout correctly with product information', async () => {
+  it('renders layout correctly with product information', () => {
     render(
       <Provider store={store}>
         <Router>
-          <CardCart id="123" />
+          <CardCart product_in={testProduct} />
         </Router>
       </Provider>
     );
 
-    // Wait for the product name to appear
-    const productName = await screen.findByText('Test Product');
-    expect(productName).toBeInTheDocument();
+    // Check for product name and price
+    expect(screen.getByText('Test Product')).toBeInTheDocument();
+    expect(screen.getByText('$99')).toBeInTheDocument();
 
-    // Check that the price is rendered
-    const productPrice = screen.getByText('$99');
-    expect(productPrice).toBeInTheDocument();
-
-    // Check for the decrement and increment buttons
-    expect(screen.getByText('-')).toBeInTheDocument();
+    // Check increment and decrement buttons
     expect(screen.getByText('+')).toBeInTheDocument();
+    expect(screen.getByText('-')).toBeInTheDocument();
 
-    // Check for the remove link
-    const removeLink = screen.getByText('Remove');
-    expect(removeLink).toBeInTheDocument();
+    // Check remove link
+    expect(screen.getByText('Remove')).toBeInTheDocument();
   });
 
-  it('removes the component when the remove link is clicked', async () => {
+  it('removes the component when the remove link is clicked', () => {
     render(
       <Provider store={store}>
         <Router>
-          <CardCart id="123" />
+          <CardCart product_in={testProduct} />
         </Router>
       </Provider>
     );
-
-    // Wait for the product to load
-    await screen.findByText('Test Product');
 
     const removeLink = screen.getByText('Remove');
     fireEvent.click(removeLink);
 
-    // After clicking remove, the component should return null and nothing is rendered
     expect(screen.queryByText('Test Product')).toBeNull();
+  });
+
+  it('disables increment button when quantity equals stock', () => {
+    store = mockStore({
+      cart: { items: [{ ...testProduct, quantity: 10 }] },
+    });
+
+    render(
+      <Provider store={store}>
+        <Router>
+          <CardCart product_in={testProduct} />
+        </Router>
+      </Provider>
+    );
+
+    const incrementButton = screen.getByText('+');
+    expect(incrementButton).toBeDisabled();
   });
 });

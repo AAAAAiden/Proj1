@@ -11,9 +11,7 @@ import {
 } from "@ant-design/icons";
 import { useAuth } from "../context/AuthContext";
 import { useSelector } from "react-redux";
-import { useDrawer } from "./pages/Cart/CartPage"
 import CardCart  from "./pages/Cart/CardInCart";
-
 
 const Layout = () => {
   const { username, token, signOut, loading } = useAuth();
@@ -21,6 +19,8 @@ const Layout = () => {
   const [messageApi, contextHolder] = message.useMessage();
   const totalPrice = useSelector((state) => state.cart.total);
   const [discount, setDiscount] = useState(0);
+  const [isCartOpen, setIsCartOpen] = useState(false);
+
   
 
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -105,8 +105,7 @@ const Layout = () => {
           </div>
         </footer>
 
-
-        <Drawer
+     <Drawer
         title={`Cart (${cartItems.length})`}
         open={drawerOpen}
         onClose={closeDrawer}
@@ -156,9 +155,10 @@ const Layout = () => {
           >Continue to checkout</Button>
         </Row>
       </Drawer>
-      </div>
+   </div>
     </>
   );
+
 };
 
 export default Layout;

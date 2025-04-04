@@ -7,22 +7,20 @@ const DrawerContext = createContext();
 
 export const CartPage = () => {
   const [open, setOpen] = useState(false);
-  const [total, setTotal] = useState(0);
-
   const cartItems = useSelector((state) => state.cart?.items || []);
+  const subtotal = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
+  const tax = subtotal * 0.1;
+  const discount = 20;
+  const total = (subtotal + tax - discount).toFixed(2);
 
-  const showDrawer = () => {
-    setOpen(true);
-  };
-  const onClose = () => {
-    setOpen(false);
-  };
+  const showDrawer = () => setOpen(true);
+  const onClose = () => setOpen(false);
 
   return (
     <DrawerContext.Provider value={{ showDrawer, onClose }}>
-      {/* <Drawer title={`Cart (${cartItems.length})`} onClose={onClose} open={open} width={400}>
+      <Drawer title={`Cart (${cartItems.length})`} onClose={onClose} open={open} width={400}>
         {cartItems.map((item) => (
-          <CardCart key={item._id} id={item._id} />
+          <CardCart key={item._id} product_in={item} />
         ))}
 
         <Form layout="vertical">
@@ -42,22 +40,14 @@ export const CartPage = () => {
               <Row><p>Estimated Total</p></Row>
             </Col>
             <Col span={6}>
+              <Row><p>${subtotal.toFixed(2)}</p></Row>
+              <Row><p>${tax.toFixed(2)}</p></Row>
+              <Row><p>-${discount}</p></Row>
               <Row><p>${total}</p></Row>
-              <Row><p>${(total * 0.1).toFixed(2)}</p></Row>
-              <Row><p>${-20}</p></Row>
-              <Row><p>${(1.1 * total - 20).toFixed(2)}</p></Row>
             </Col>
           </Row>
         </div>
-      </Drawer> */}
-      <Drawer
-  title={`Cart (${cartItems.length})`}
-  onClose={onClose}
-  open={open}
-  width={400}
->
-  <p>Cart content here</p>
-</Drawer>
+      </Drawer>
     </DrawerContext.Provider>
   );
 };

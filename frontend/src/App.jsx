@@ -12,9 +12,7 @@ import {AdminRoute, PrivateRoute} from "./components/Auth/AdminRoute";
 import EditProduct from "./components/pages/EditPro";
 import { Provider } from 'react-redux';
 import { store } from './store';
-import HardcodedCardCart from './components/pages/Cart/HardcodeCard'
-import { DrawerProvider } from './components/pages/Cart/CartPage';
-import CardCart from './components/pages/Cart/CardInCart';
+
 
 
 function App() {

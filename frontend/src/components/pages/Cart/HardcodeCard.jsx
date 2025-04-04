@@ -4,21 +4,18 @@ import { Card, Typography, Input, Button, Row, Col } from 'antd';
 const { Title } = Typography;
 
 const HardcodedCardCart = () => {
-  // Hard-coded product details
   const product = {
     _id: '123',
     image: 'https://via.placeholder.com/150',
     title: 'Sample Product',
     name: 'Sample Product Name',
     price: 29.99,
-    quantity: 10, // Maximum available quantity
+    quantity: 10,
   };
 
-  // Local state for quantity and visibility
   const [quantity, setQuantity] = useState(1);
   const [isVisible, setIsVisible] = useState(true);
 
-  // Handlers for incrementing/decrementing quantity
   const handleIncrement = () => {
     if (quantity < product.quantity) {
       setQuantity(quantity + 1);
@@ -31,61 +28,31 @@ const HardcodedCardCart = () => {
     }
   };
 
-  if (!isVisible) {
-    return null;
-  }
+  if (!isVisible) return null;
 
   return (
     <Card style={{ margin: '20px' }}>
       <Row gutter={16}>
         <Col span={6}>
-          <img 
-            src={product.image} 
-            alt={product.title} 
-            style={{ width: '100%' }} 
-          />
+          <img src={product.image} alt={product.title} style={{ width: '100%' }} />
         </Col>
         <Col span={12}>
-          <Row>
-            <Title level={4}>{product.name}</Title>
-          </Row>
+          <Title level={4}>{product.name}</Title>
           <Row align="middle" style={{ marginTop: '20px' }}>
-            <Button 
-              onClick={handleDecrement} 
-              style={{ width: 64, padding: 0 }}
-            >
-              -
-            </Button>
+            <Button onClick={handleDecrement}>-</Button>
             <Input
               value={quantity}
               readOnly
-              style={{ textAlign: 'center', width: 120, margin: '0 10px' }}
+              style={{ textAlign: 'center', width: 60, margin: '0 10px' }}
             />
-            <Button 
-              onClick={handleIncrement} 
-              style={{ width: 64, padding: 0 }}
-              disabled={quantity >= product.quantity}
-            >
-              +
-            </Button>
+            <Button onClick={handleIncrement} disabled={quantity >= product.quantity}>+</Button>
           </Row>
         </Col>
         <Col span={6} style={{ textAlign: 'center' }}>
-          <Row>
-            <Title level={4}>${product.price}</Title>
-          </Row>
-          <Row>
-            <a
-              href="#"
-              style={{ textDecoration: 'underline', cursor: 'pointer' }}
-              onClick={(e) => {
-                e.preventDefault();
-                setIsVisible(false);
-              }}
-            >
-              Remove
-            </a>
-          </Row>
+          <Title level={4}>${product.price}</Title>
+          <a href="#" onClick={(e) => { e.preventDefault(); setIsVisible(false); }}>
+            Remove
+          </a>
         </Col>
       </Row>
     </Card>
