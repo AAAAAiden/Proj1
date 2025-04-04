@@ -35,7 +35,7 @@ exports.signup = async (req, res) => {
     });
   } catch (err) {
     console.error(err.message);
-    res.status(500).send('Something wrong when generating tokens');
+    res.status(500).json({msg: 'Server Error when sign up'});
   }
 };
 
@@ -66,22 +66,7 @@ exports.signin = async (req, res) => {
     });
   } catch (err) {
     console.error(err.message);
-    res.status(500).send('Something wrong with generating tokens');
+    res.status(500).json({msg: 'Server Error when sign up'});
   }
 };
 
-// Check availability for username/email
-exports.checkAvailability = async (req, res) => {
-  const { field, value } = req.query;
-  if (!['username', 'email'].includes(field)) {
-    return res.status(400).json({ msg: 'Invalid field' });
-  }
-
-  try {
-    const exists = await User.findOne({ [field]: value });
-    res.json({ available: !exists });
-  } catch (err) {
-    console.error(err.message);
-    res.status(500).send('Server Error');
-  }
-};

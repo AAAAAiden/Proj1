@@ -6,7 +6,7 @@ const { Title, Text } = Typography;
 const UpdatePassword = () => {
   const [form] = Form.useForm();
   const [animate, setAnimate] = useState(false);
-  const [messageApi, contextHolder] = message.useMessage();
+  const [contextHolder] = message.useMessage();
   const navigate = useNavigate();
   useEffect(() => {
     setAnimate(true);

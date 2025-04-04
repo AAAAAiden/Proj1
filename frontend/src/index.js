@@ -1,15 +1,11 @@
 import 'antd/dist/reset.css';
-import React, { Component } from 'react';
+import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
-import { DatePicker, message } from 'antd';
-import { createRoot } from 'react-dom/client';
-import SignIn from './components/Auth/SignIn';
-import SignUp from './components/Auth/SignUp';
 import { AuthProvider } from './context/AuthContext';
-import { BrowserRouter } from 'react-router-dom';
+import { Provider } from 'react-redux';
 
 const container = document.getElementById("root");
 if (!container) {
@@ -21,6 +17,7 @@ root.render(
     <AuthProvider>
       <App />
     </AuthProvider>
+    {/* <App /> */}
   </React.StrictMode>
 );
 

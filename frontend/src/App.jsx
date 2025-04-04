@@ -9,14 +9,18 @@ import RecoverySent from "./components/Auth/RecoverySent";
 import UploadPro from "./components/pages/uploadPro";
 import DetailPage from "./components/pages/DetailPage"
 import {AdminRoute, PrivateRoute} from "./components/Auth/AdminRoute";
-
-import { CartProvider } from "./context/CartContext";
 import EditProduct from "./components/pages/EditPro";
+import { Provider } from 'react-redux';
+import { store } from './store';
+import HardcodedCardCart from './components/pages/Cart/HardcodeCard'
+import { DrawerProvider } from './components/pages/Cart/CartPage';
+import CardCart from './components/pages/Cart/CardInCart';
+
 
 function App() {
   return (
-    <Router>
-      <CartProvider>
+    <Provider store={store}>
+      <Router>
         <Routes>
           <Route path="/" element={<Layout />}>
             <Route index element={<Navigate to="/signin" replace />} />
@@ -58,10 +62,22 @@ function App() {
             />
           </Route>
         </Routes>
-      </CartProvider>
-    </Router>
+      </Router>
+    </Provider>
   );
 }
+
+
+// function App() {
+//   return (
+//     <Router>
+//       <Routes>
+//         {/* Define a route where productId is a URL parameter */}
+//         <Route path="/" element={<HardcodedCardCart />} />
+//       </Routes>
+//     </Router>
+//   );
+// }
 
 
 export default App;

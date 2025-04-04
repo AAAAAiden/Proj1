@@ -3,7 +3,7 @@ const express = require('express');
 const router = express.Router();
 const productController = require('../controllers/productController');
 const { checkToken, checkAdmin } = require('../middleware/authMiddleware');
-const upload = require('../utils/s3Config');
+const upload = require('../middleware/s3Uploader');
 
 router.get('/', productController.listProducts);
 router.get('/check-name', productController.checkProductName);

@@ -39,7 +39,7 @@ const EditProduct = () => {
         setProductName(data.name);
       })
       .catch(() => messageApi.error("Failed to load product info"));
-  }, [productId, form]);
+  }, [productId, form, messageApi]);
 
   const onFinish = async (values) => {
     setLoading(true);
