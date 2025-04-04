@@ -10,33 +10,35 @@ const ProductCard = ({ product }) => {
   const cartItems = useSelector((state) => state.cart.items);
   const cartItem = cartItems.find((item) => item._id === product._id);
   const role = sessionStorage.getItem("role");
-  const isEditing = !!cartItem?.quantity;
+
+  const current = cartItem?.quantity || 0;
+  const maxStock = cartItem?.stock || product.quantity || 0;
+  const remainingStock = maxStock - current;
+  const isEditing = current > 0;
 
   const handleAddToCartClick = (e) => {
     e.stopPropagation();
-    dispatch(addToCart({ ...product, quantity: 1 }));
+    dispatch(addToCart({ ...product, quantity: 1, stock: product.quantity }));
   };
 
   const handleQuantityChange = (e) => {
     const value = parseInt(e.target.value, 10);
     if (isNaN(value) || value <= 0) {
       dispatch(updateQuantity({ _id: product._id, quantity: 0 }));
-    } else if (value > product.quantity) {
-      dispatch(updateQuantity({ _id: product._id, quantity: product.quantity }));
+    } else if (value > maxStock) {
+      dispatch(updateQuantity({ _id: product._id, quantity: maxStock }));
     } else {
       dispatch(updateQuantity({ _id: product._id, quantity: value }));
     }
   };
 
   const handleIncrement = () => {
-    const current = cartItem?.quantity || 0;
-    if (current < product.quantity) {
+    if (current < maxStock) {
       dispatch(updateQuantity({ _id: product._id, quantity: current + 1 }));
     }
   };
 
   const handleDecrement = () => {
-    const current = cartItem?.quantity || 0;
     const newVal = Math.max(0, current - 1);
     dispatch(updateQuantity({ _id: product._id, quantity: newVal }));
   };
@@ -59,7 +61,21 @@ const ProductCard = ({ product }) => {
           <div style={{ fontSize: '16px', fontWeight: 'bold', color: 'black' }}>
             ${product.price}
           </div>
-          <div style={{ fontSize: '13px', color: 'black' }}>{product.name}</div>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <div style={{ fontSize: '13px', color: 'black' }}>{product.name}</div>
+
+            {remainingStock <= 3 && remainingStock > 0 && (
+                <div style={{ fontSize: '12px', color: 'red', marginLeft: 8 }}>
+                Only {remainingStock} left!
+                </div>
+            )}
+
+            {remainingStock === 0 && (
+                <div style={{ fontSize: '12px', color: 'gray', marginLeft: 8 }}>
+                Out of stock
+                </div>
+            )}
+          </div>
         </div>
       </Link>
 
@@ -67,13 +83,13 @@ const ProductCard = ({ product }) => {
         <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 12 }}>
           <Button onClick={handleDecrement} style={{ width: 64, padding: 0 }}>−</Button>
           <Input
-            value={cartItem?.quantity || 0}
+            value={current}
             onChange={handleQuantityChange}
             style={{ textAlign: 'center', width: 120 }}
           />
           <Button
             onClick={handleIncrement}
-            disabled={cartItem?.quantity >= product.quantity}
+            disabled={current >= maxStock}
             style={{ width: 64, padding: 0 }}
           >
             +

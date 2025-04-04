@@ -1,45 +1,45 @@
 import React, { useState } from 'react';
 import { Card, Input, Button, Row, Col, message } from 'antd';
-import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { updateQuantity, removeFromCart } from '../../../store/cartSlice';
 
 const CardCart = ({ product_in }) => {
-  const [product] = useState(product_in);
   const [messageApi, contextHolder] = message.useMessage();
   const dispatch = useDispatch();
-  const navigate = useNavigate();
-  const cartItems = useSelector((state) => state.cart.items);
   const [isVisible, setIsVisible] = useState(true);
 
-  const cartItem = cartItems.find((item) => item._id === product?._id);
+  const cartItems = useSelector((state) => state.cart.items);
+  const cartItem = cartItems.find((item) => item._id === product_in?._id);
+
+  // Cart quantity and inventory stock
   const quantity = cartItem?.quantity || 0;
+  const maxStock = cartItem?.stock || product_in.quantity || 0;
 
   const handleQuantityChange = (e) => {
     const value = parseInt(e.target.value, 10);
     if (isNaN(value) || value <= 0) {
-      dispatch(updateQuantity({ _id: product._id, quantity: 0 }));
-    } else if (value > product.quantity) {
-      dispatch(updateQuantity({ _id: product._id, quantity: product.quantity }));
+      dispatch(updateQuantity({ _id: product_in._id, quantity: 0 }));
+    } else if (value > maxStock) {
+      dispatch(updateQuantity({ _id: product_in._id, quantity: maxStock }));
     } else {
-      dispatch(updateQuantity({ _id: product._id, quantity: value }));
+      dispatch(updateQuantity({ _id: product_in._id, quantity: value }));
     }
   };
 
   const handleIncrement = () => {
-    if (quantity < product.quantity) {
-      dispatch(updateQuantity({ _id: product._id, quantity: quantity + 1 }));
+    if (quantity < maxStock) {
+      dispatch(updateQuantity({ _id: product_in._id, quantity: quantity + 1 }));
     }
   };
 
   const handleDecrement = () => {
     const newVal = Math.max(0, quantity - 1);
-    dispatch(updateQuantity({ _id: product._id, quantity: newVal }));
+    dispatch(updateQuantity({ _id: product_in._id, quantity: newVal }));
   };
 
   const removeItem = () => {
-    dispatch(updateQuantity({ _id: product._id, quantity: 0 }));
-    dispatch(removeFromCart(product._id));
+    dispatch(updateQuantity({ _id: product_in._id, quantity: 0 }));
+    dispatch(removeFromCart(product_in._id));
   };
 
   if (!isVisible || !product_in) {
@@ -52,8 +52,8 @@ const CardCart = ({ product_in }) => {
       <Row>
         <Col span={6}>
           <img
-            src={product.image}
-            alt={product.title}
+            src={product_in.image}
+            alt={product_in.name}
             style={{ width: '100%', aspectRatio: '1 / 1', objectFit: 'cover' }}
           />
         </Col>
@@ -61,10 +61,10 @@ const CardCart = ({ product_in }) => {
         <Col span={18} style={{ paddingLeft: '10px' }}>
           <Row gutter={16}>
             <Col span={12}>
-              <h1>{product.name}</h1>
+              <h1>{product_in.name}</h1>
             </Col>
             <Col span={12} style={{ textAlign: 'right' }}>
-              <h1>${product.price}</h1>
+              <h1>${product_in.price}</h1>
             </Col>
           </Row>
 
@@ -73,19 +73,19 @@ const CardCart = ({ product_in }) => {
               <div style={{ display: 'flex' }}>
                 <Button
                   onClick={handleDecrement}
-                  style={{ width: 16, padding: 0, marginRight: 4, height: 20 }}
+                  style={{ width: 24, padding: 0, marginRight: 4, height: 20 }}
                 >
                   -
                 </Button>
                 <Input
                   value={quantity}
                   onChange={handleQuantityChange}
-                  style={{ textAlign: 'center', width: 32, height: 20 }}
+                  style={{ textAlign: 'center', width: 50, height: 20 }}
                 />
                 <Button
                   onClick={handleIncrement}
-                  disabled={quantity >= product.quantity}
-                  style={{ width: 16, padding: 0, marginLeft: 4, height: 20 }}
+                  disabled={quantity >= maxStock}
+                  style={{ width: 24, padding: 0, marginLeft: 4, height: 20 }}
                 >
                   +
                 </Button>

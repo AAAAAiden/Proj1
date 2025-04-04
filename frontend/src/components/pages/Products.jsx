@@ -5,15 +5,18 @@ import ProductCard from "./ProductCard";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from 'react-redux';
 import { clearCart } from '../../store/cartSlice';
+import { message } from 'antd';
 
 const { Title } = Typography;
 
 const Products = () => {
   const [products, setProducts] = useState([]);
   const [sortOrder, setSortOrder] = useState("oldest");
+  const [deleteDisabled, setDeleteDisabled] = useState(false);
   const navigate = useNavigate();
   const role = sessionStorage.getItem("role");
   const dispatch = useDispatch();
+  const [messageApi, contextHolder] = message.useMessage();
 
   useEffect(() => {
     fetch("http://localhost:5001/api/products", {
@@ -47,9 +50,17 @@ const Products = () => {
 
   const handleClearCart = () => {
     dispatch(clearCart());
+    messageApi.success("Cart cleared!");
+    setDeleteDisabled(true);
+
+    setTimeout(() => {
+        setDeleteDisabled(false);
+    }, 3000);
   };
 
   return (
+    <>
+    {contextHolder}
     <div style={{ padding: "20px", height: "100%", display: "flex", flexDirection: "column" }}>
       <Flex justify="space-between" align="center" style={{ marginBottom: 24 }}>
         <Title level={2} style={{ margin: 0 }}>
@@ -68,7 +79,7 @@ const Products = () => {
               Upload New Product
             </Button>
           )}
-          <Button danger onClick={handleClearCart}>
+          <Button danger onClick={handleClearCart} disabled={deleteDisabled}>
             Delete Cart
           </Button>
         </Flex>
@@ -84,6 +95,7 @@ const Products = () => {
         </Flex>
       </div>
     </div>
+    </>
   );
 };
 
