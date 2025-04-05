@@ -6,7 +6,7 @@ export const useAuth = () => useContext(AuthContext);
 export const AuthProvider = ({ children }) => {
   const [username, setUsername] = useState(null);
   const [token, setToken] = useState(null);
-  const [loading, setLoading] = useState(true);
+  // const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const storedUsername = sessionStorage.getItem("username");
@@ -15,7 +15,7 @@ export const AuthProvider = ({ children }) => {
       setUsername(storedUsername);
       setToken(storedToken);
     }
-    setLoading(false);
+    // setLoading(false);
   }, []);
 
   const signIn = (username, token) => {
@@ -32,7 +32,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ username, token, signIn, signOut, loading }}>
+    <AuthContext.Provider value={{ username, token, signIn, signOut/*, loading*/ }}>
       {children}
     </AuthContext.Provider>
   );

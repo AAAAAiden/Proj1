@@ -122,14 +122,19 @@ const Layout = () => {
         )}
         <p style={{marginTop: "20px"}}>Apply Discount Code</p>
         <Row align="middle" gutter={8} style={{ marginTop: "10px" }}>
-          <Col span={16}>
+          <Col flex='auto'>
             <Input placeholder="20 DOLAR OFF" />
           </Col>
-          <Col span={8}>
-            <Button type="primary" onClick={() => {
+          <Col>
+            <Button type="primary" style={{minWidth: 40}} onClick={() => {
               setDiscount(20)
             }}>
               Apply
+            </Button>
+          </Col>
+          <Col span={6}>
+            <Button danger style={{ minWidth: 20 }} onClick={() => setDiscount(0)}>
+              Remove
             </Button>
           </Col>
         </Row>

@@ -12,6 +12,7 @@ import {AdminRoute, PrivateRoute} from "./components/Auth/AdminRoute";
 import EditProduct from "./components/pages/EditPro";
 import { Provider } from 'react-redux';
 import { store } from './store';
+import NotFound from './components/pages/Oops/NotFound';
 
 
 
@@ -58,6 +59,7 @@ function App() {
                 </AdminRoute>
               }
             />
+            <Route path="*" element={<NotFound />} /> 
           </Route>
         </Routes>
       </Router>
