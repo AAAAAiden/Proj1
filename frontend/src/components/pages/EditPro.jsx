@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import {
-  Card, Form, Input, Button, message, Typography, InputNumber, Select, Upload, Spin
+  Card, Form, Input, Button, message, Typography, InputNumber, Select, Upload, Spin, Modal
 } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
 import { useNavigate, useParams } from "react-router-dom";
@@ -91,6 +91,40 @@ const EditProduct = () => {
     }
   };
 
+
+  const handleDelete = () => {
+    Modal.confirm({
+      title: "Are you sure you want to delete this product?",
+      content: "This action cannot be undone.",
+      okText: "Yes, delete it",
+      okType: "danger",
+      cancelText: "Cancel",
+      onOk: async () => {
+        setLoading(true);
+        try {
+          const res = await fetch(`http://localhost:5001/api/products/${productId}`, {
+            method: "DELETE",
+            headers: {
+              "x-auth-token": sessionStorage.getItem("token"),
+            },
+          });
+  
+          const data = await res.json().catch(() => ({}));
+          if (!res.ok) throw data;
+  
+          messageApi.success("Product deleted successfully!");
+          navigate("/products");
+        } catch (err) {
+          console.error("Delete error:", err);
+          messageApi.error(err.msg || "Failed to delete product.");
+        } finally {
+          setLoading(false);
+        }
+      },
+    });
+  };
+
+  
   return (
     <>
       {contextHolder}
@@ -246,7 +280,18 @@ const EditProduct = () => {
                     Save Changes
                   </Button>
                 </Form.Item>
-
+                
+                <Form.Item>
+                    <Button
+                        danger
+                        type="primary"
+                        style={{ width: "100%" }}
+                        onClick={handleDelete}
+                        disabled={loading}
+                    >
+                        Delete Product
+                    </Button>
+                    </Form.Item>
                 <Form.Item>
                   <Button
                     type="default"
