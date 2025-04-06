@@ -1,5 +1,5 @@
 import React from 'react';
-import { Card, Input, Button } from 'antd';
+import { Card, Input, Button, message } from 'antd';
 import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { addToCart, updateQuantity } from '../../store/cartSlice';
@@ -7,6 +7,8 @@ import { addToCart, updateQuantity } from '../../store/cartSlice';
 const ProductCard = ({ product }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const [messageApi, contextHolder] = message.useMessage();
+
   const cartItems = useSelector((state) => state.cart.items);
   const cartItem = cartItems.find((item) => item._id === product._id);
   const role = sessionStorage.getItem("role");
@@ -23,6 +25,11 @@ const ProductCard = ({ product }) => {
 
   const handleQuantityChange = (e) => {
     const value = parseInt(e.target.value, 10);
+    if (current === 0) {
+        messageApi.error("This item is not in cart!");
+        return;
+    }
+
     if (isNaN(value) || value <= 0) {
       dispatch(updateQuantity({ _id: product._id, quantity: 0 }));
     } else if (value > maxStock) {
@@ -33,18 +40,27 @@ const ProductCard = ({ product }) => {
   };
 
   const handleIncrement = () => {
+    if (current === 0) {
+        messageApi.error("This item is not in cart!");
+        return;
+    }
     if (current < maxStock) {
       dispatch(updateQuantity({ _id: product._id, quantity: current + 1 }));
     }
   };
 
   const handleDecrement = () => {
+    if (current === 0) {
+        messageApi.error("This item is not in cart!");
+        return;
+    }
     const newVal = Math.max(0, current - 1);
     dispatch(updateQuantity({ _id: product._id, quantity: newVal }));
   };
 
   return (
     <Card hoverable style={{ width: 300, height: 400 }}>
+    {contextHolder}
       <Link to={`/products/${product._id}`} style={{ textDecoration: 'none' }}>
         <div style={{ display: 'flex', justifyContent: 'center', marginTop: 10 }}>
           <img

@@ -17,11 +17,3 @@ export function signIn(userData) {
     }).then(response => response.json());
 }
 
-
-export function updatePassword(userData) {
-    return fetch(`${BASE_URL}/auth/update-password`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(userData),
-    }).then(response => response.json());
-}

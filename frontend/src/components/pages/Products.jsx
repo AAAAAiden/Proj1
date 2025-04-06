@@ -1,11 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { Typography, Flex, Button, Dropdown } from "antd";
+import { Typography, Flex, Button, Dropdown, message } from "antd";
 import { DownOutlined } from "@ant-design/icons";
 import ProductCard from "./ProductCard";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from 'react-redux';
 import { clearCart } from '../../store/cartSlice';
-import { message } from 'antd';
 
 const { Title } = Typography;
 

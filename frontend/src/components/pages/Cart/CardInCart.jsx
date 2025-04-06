@@ -7,15 +7,17 @@ const CardCart = ({ product_in }) => {
   const [messageApi, contextHolder] = message.useMessage();
   const dispatch = useDispatch();
   const [isVisible, setIsVisible] = useState(true);
-
+  
   const cartItems = useSelector((state) => state.cart.items);
   const cartItem = cartItems.find((item) => item._id === product_in?._id);
-
-  // Cart quantity and inventory stock
-  const quantity = cartItem?.quantity || 0;
+  const current = cartItem?.quantity || 0;
   const maxStock = cartItem?.stock || product_in.quantity || 0;
 
   const handleQuantityChange = (e) => {
+    if (current === 0) {
+      messageApi.error("This item is not in cart!");
+      return;
+  }
     const value = parseInt(e.target.value, 10);
     if (isNaN(value) || value <= 0) {
       dispatch(updateQuantity({ _id: product_in._id, quantity: 0 }));
@@ -27,13 +29,21 @@ const CardCart = ({ product_in }) => {
   };
 
   const handleIncrement = () => {
-    if (quantity < maxStock) {
-      dispatch(updateQuantity({ _id: product_in._id, quantity: quantity + 1 }));
+    if (current === 0) {
+      messageApi.error("This item is not in cart!");
+      return;
+  }
+    if (current < maxStock) {
+      dispatch(updateQuantity({ _id: product_in._id, quantity: current + 1 }));
     }
   };
 
   const handleDecrement = () => {
-    const newVal = Math.max(0, quantity - 1);
+    if (current === 0) {
+      messageApi.error("This item is not in cart!");
+      return;
+  }
+    const newVal = Math.max(0, current - 1);
     dispatch(updateQuantity({ _id: product_in._id, quantity: newVal }));
   };
 
@@ -78,13 +88,13 @@ const CardCart = ({ product_in }) => {
                   -
                 </Button>
                 <Input
-                  value={quantity}
+                  value={current}
                   onChange={handleQuantityChange}
                   style={{ textAlign: 'center', width: 50, height: 20 }}
                 />
                 <Button
                   onClick={handleIncrement}
-                  disabled={quantity >= maxStock}
+                  disabled={current >= maxStock}
                   style={{ width: 24, padding: 0, marginLeft: 4, height: 20 }}
                 >
                   +

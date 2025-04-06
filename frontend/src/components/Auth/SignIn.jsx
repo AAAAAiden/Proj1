@@ -12,13 +12,15 @@ const SignIn = () => {
   const [messageApi, contextHolder] = message.useMessage();
   const [animate, setAnimate] = useState(false);
   const navigate = useNavigate();
-  const { signIn:setAuthUser, username } = useAuth();
+  const { signIn:setAuthUser } = useAuth();
 
+  /* here we can add setAuthUser in dependancy to remove warning if we memoiz the 
+  signIn and signOut in Authcontext with useCallback(,[]) */
   useEffect(() => {
     setAnimate(true);
     sessionStorage.clear();
     setAuthUser(null, null);
-  }, []);
+  }, []); 
 
   const onFinish = (values) => {
     signIn(values)
