@@ -6,7 +6,7 @@ const { Title, Text } = Typography;
 const UpdatePassword = () => {
   const [form] = Form.useForm();
   const [animate, setAnimate] = useState(false);
-  const [contextHolder] = message.useMessage();
+  const [messageApi, contextHolder] = message.useMessage();
   const navigate = useNavigate();
   useEffect(() => {
     setAnimate(true);
@@ -42,7 +42,7 @@ const UpdatePassword = () => {
               Update Your Password
             </Title>
             <Text type="secondary" style={{ display: "block", textAlign: "center", marginBottom: 24, fontSize: '11px' }}>
-              Enter your email and we’ll send you a recovery link.
+              Enter your email and we will send you a recovery link.
             </Text>
 
             <Form

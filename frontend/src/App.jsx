@@ -23,61 +23,28 @@ function App() {
         <Routes>
           <Route path="/" element={<Layout />}>
             <Route index element={<Navigate to="/signin" replace />} />
-            <Route path="/signup" element={<SignUp />} />
-            <Route path="/signin" element={<SignIn />} />
-            <Route path='/updatepassword' element={<UpdatePassword />} />
-            <Route
-              path="/products"
-              element={
-                <PrivateRoute>
-                  <Products />
-                </PrivateRoute>
-              }
-            />
-            <Route
-              path="/products/:productId"
-              element={
-                <PrivateRoute>
-                  <DetailPage />
-                </PrivateRoute>
-              }
-            />
-            <Route path="/recovery-sent" element={<RecoverySent />} />          
-            <Route
-              path="/productupload"
-              element={
-                <AdminRoute>
-                  <UploadPro />
-                </AdminRoute>
-              }
-            />
-            <Route
-              path="/products/:productId/edit"
-              element={
-                <AdminRoute>
-                  <EditProduct />
-                </AdminRoute>
-              }
-            />
-            <Route path="*" element={<NotFound />} /> 
+
+            <Route path="signup" element={<SignUp />} />
+            <Route path="signin" element={<SignIn />} />
+            <Route path="updatepassword" element={<UpdatePassword />} />
+            <Route path="recovery-sent" element={<RecoverySent />} />
+
+            <Route element={<PrivateRoute />}>
+              <Route path="products" element={<Products />} />
+              <Route path="products/:productId" element={<DetailPage />} />
+            </Route>
+
+            <Route element={<AdminRoute />}>
+              <Route path="productupload" element={<UploadPro />} />
+              <Route path="products/:productId/edit" element={<EditProduct />} />
+            </Route>
+
+            <Route path="*" element={<NotFound />} />
           </Route>
         </Routes>
       </Router>
     </Provider>
   );
 }
-
-
-// function App() {
-//   return (
-//     <Router>
-//       <Routes>
-//         {/* Define a route where productId is a URL parameter */}
-//         <Route path="/" element={<HardcodedCardCart />} />
-//       </Routes>
-//     </Router>
-//   );
-// }
-
 
 export default App;
