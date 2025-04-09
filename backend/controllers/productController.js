@@ -112,3 +112,18 @@ exports.checkProductName = async (req, res) => {
     res.status(500).json({ msg: 'Server Error when checking name' });
   }
 };
+
+// Search products by name
+exports.searchProducts = async (req, res) => {
+  const query = req.query.q;
+  if (!query) return res.status(400).json({ error: 'Missing search query' });
+
+  try {
+    const regex = new RegExp(query, 'i'); // case-insensitive match
+    const products = await Product.find({ name: regex }).limit(10);
+    res.json(products);
+  } catch (error) {
+    console.error('Search error:', error);
+    res.status(500).json({ error: 'Server error during search' });
+  }
+};

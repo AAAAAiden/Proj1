@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Outlet, Link, useNavigate } from "react-router-dom";
-import { Input, message, Drawer, Row, Col, Button, Divider } from "antd";
+import { Input, message, Drawer, Row, Col, Button, Divider, AutoComplete } from "antd";
 import {
   UserOutlined,
   ShoppingCartOutlined,
@@ -19,16 +19,13 @@ const Layout = () => {
   const [messageApi, contextHolder] = message.useMessage();
   const totalPrice = useSelector((state) => state.cart.total);
   const [discount, setDiscount] = useState(0);
-  const [isCartOpen, setIsCartOpen] = useState(false);
-
-  
-
   const [drawerOpen, setDrawerOpen] = useState(false);
   const openDrawer = () => setDrawerOpen(true);
   const closeDrawer = () => setDrawerOpen(false);
-
-
   const cartItems = useSelector((state) => state.cart?.items || []);
+  const [searchText, setSearchText] = useState('');
+  const [searchResults, setSearchResults] = useState([]);
+
 
 
 
@@ -44,7 +41,40 @@ const Layout = () => {
     }, 1500);
   };
 
+  const handleSearch = async (value) => {
+    setSearchText(value);
+    if (!value) {
+      setSearchResults([]);
+      return;
+    }
+  
+    try {
+      const response = await fetch(`http://localhost:5001/api/products/search?q=${encodeURIComponent(value)}`);
+      console.log("API response status:", response.status);
+      if (!response.ok) throw new Error('Search failed');
+      const data = await response.json();
+      console.log("Search results:", data);
 
+      const options = data.map((product) => ({
+        value: product.name,
+        label: `${product.name} - $${product.price}`,
+        productId: product._id
+      }));
+  
+      setSearchResults(options);
+    } catch (error) {
+      console.error("Search error:", error);
+      setSearchResults([]);
+    }
+  };
+  
+  const handleSelect = (value, option) => {
+    const productId = option.productId;
+    if (productId) {
+      navigate(`/products/${productId}`);
+    }
+  };
+  
 
   return (
     <>
@@ -54,7 +84,7 @@ const Layout = () => {
           <div className="header-left">
             <div className="chuwa-title">Management <span>Chuwa</span></div>
             <div className="user-auth">
-              {username ? (
+              {username && username !== "null" ? (
                 <span style={{ color: "#fff", cursor: "pointer" }} onClick={handleSignOut}>
                   <UserOutlined style={{ marginRight: 4 }} />
                   {username} | Sign Out
@@ -69,12 +99,17 @@ const Layout = () => {
           </div>
 
           <div className="seach-bar">
-            <Input
-              className="search-input"
-              placeholder="Search"
-              prefix={<SearchOutlined />}
-              disabled={!token}
-            />
+            <AutoComplete
+                className="search-input"
+                options={searchResults}
+                onSearch={handleSearch}
+                onSelect={handleSelect}
+                disabled={!token}
+                style={{ width: 300 }}
+                allowClear
+                >
+                <Input prefix={<SearchOutlined />} />
+            </AutoComplete>
           </div>
 
           <div className="header-right">
