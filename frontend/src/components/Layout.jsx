@@ -12,6 +12,7 @@ import {
 import { useAuth } from "../context/AuthContext";
 import { useSelector } from "react-redux";
 import CardCart  from "./pages/Cart/CardInCart";
+import { useMediaQuery } from "react-responsive";
 
 const Layout = () => {
   const { username, token, signOut, loading } = useAuth();
@@ -25,6 +26,7 @@ const Layout = () => {
   const cartItems = useSelector((state) => state.cart?.items || []);
   const [searchText, setSearchText] = useState('');
   const [searchResults, setSearchResults] = useState([]);
+  const isMobile = useMediaQuery({ maxWidth: 768 });
 
 
 
@@ -144,7 +146,7 @@ const Layout = () => {
         title={`Cart (${cartItems.length})`}
         open={drawerOpen}
         onClose={closeDrawer}
-        width={400}
+        width={isMobile ? "100%" : 400}
       >
         {console.log(cartItems)}
         {cartItems && cartItems.length > 0 ? (
