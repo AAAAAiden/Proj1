@@ -6,6 +6,7 @@ import { useDispatch } from 'react-redux';
 import { clearCart } from '../../store/cartSlice';
 import { getAllProducts } from "./productApi";
 import { useAuth } from "../../context/AuthContext";
+import { useMediaQuery } from "react-responsive";
 
 const { Title } = Typography;
 
@@ -17,6 +18,7 @@ const Products = () => {
   const {role} = useAuth();
   const dispatch = useDispatch();
   const [messageApi, contextHolder] = message.useMessage();
+  const isMobile = useMediaQuery({ maxWidth: 768 });
 
   useEffect(() => {
     getAllProducts()
@@ -57,9 +59,9 @@ const Products = () => {
     <>
     {contextHolder}
     <div style={{ padding: "20px", height: "100%", display: "flex", flexDirection: "column" }}>
-      <Flex justify="space-between" align="center" style={{ marginBottom: 24 }}>
+      {/* <Flex justify="space-between" align="center" style={{ marginBottom: 24 }}>
         <Title level={2}>
-          Our Products
+          Products
         </Title>
 
         <Flex gap="small">
@@ -78,7 +80,49 @@ const Products = () => {
             Delete Cart
           </Button>
         </Flex>
-      </Flex>
+      </Flex> */}
+
+{isMobile ? (
+          <>
+            <Title level={2} style={{ textAlign: "center", width: "100%", marginBottom: 16 }}>
+              Products
+            </Title>
+            <div style={{ width: "100%", display: "flex", justifyContent: "center", gap: "8px", marginBottom: 24 }}>
+              <Dropdown menu={{ items: sortOptions, onClick: handleSortChange }} placement="bottomLeft">
+                <Button>
+                  {sortOptions.find((opt) => opt.key === sortOrder)?.label}
+                </Button>
+              </Dropdown>
+              {role === "admin" && (
+                <Button type="primary" onClick={() => navigate("/productupload")}>
+                  Upload New Product
+                </Button>
+              )}
+              <Button danger onClick={handleClearCart} disabled={deleteDisabled}>
+                Delete Cart
+              </Button>
+            </div>
+          </>
+        ) : (
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 24 }}>
+            <Title level={2}>Products</Title>
+            <div style={{ display: "flex", gap: "8px" }}>
+              <Dropdown menu={{ items: sortOptions, onClick: handleSortChange }} placement="bottomLeft">
+                <Button>
+                  {sortOptions.find((opt) => opt.key === sortOrder)?.label}
+                </Button>
+              </Dropdown>
+              {role === "admin" && (
+                <Button type="primary" onClick={() => navigate("/productupload")}>
+                  Upload New Product
+                </Button>
+              )}
+              <Button danger onClick={handleClearCart} disabled={deleteDisabled}>
+                Delete Cart
+              </Button>
+            </div>
+          </div>
+        )}
 
       <div style={{ flex: 1, overflowY: "auto", paddingRight: 4 }}>
         <Flex wrap gap="large" justify="flex-start">
