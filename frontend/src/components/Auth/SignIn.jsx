@@ -1,37 +1,32 @@
-import React, { useState, useEffect } from "react";
-import { Card, Form, Input, Button, message, Typography } from "antd";
+import React, { useEffect } from "react";
+import { Form, Input, Button, message, Typography } from "antd";
 import { signIn } from "./auth";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
+import AuthCardWrapper from "./AuthCardWrapper";
 
 const { Title, Text } = Typography;
 
 const SignIn = () => {
   const [form] = Form.useForm();
   const [messageApi, contextHolder] = message.useMessage();
-  const [animate, setAnimate] = useState(false);
   const navigate = useNavigate();
-  const { signIn:setAuthUser } = useAuth();
+  const { signIn:setUserIn } = useAuth();
 
-  /* here we can add setAuthUser in dependancy to remove warning if we memoiz the 
-  signIn and signOut in Authcontext with useCallback(,[]) */
   useEffect(() => {
-    setAnimate(true);
     sessionStorage.clear();
-    setAuthUser(null, null);
+    // because we want to force log-out once navigated to sign-in page
+    setUserIn(null, null, null);
   }, []); 
 
   const onFinish = (values) => {
     signIn(values)
       .then((data) => {
         if (data.token) {
-          setAuthUser(data.username, data.token);
+          setUserIn(data.username, data.token, data.role);
           messageApi.success("Sign In successful!");
-          form.resetFields();
-          sessionStorage.setItem("token", data.token);
-          sessionStorage.setItem("role", data.role); 
-          sessionStorage.setItem("username", data.username); 
+          form.resetFields(); 
           setTimeout(() => {
             navigate("/products");
           }, 1500);          
@@ -54,25 +49,7 @@ const SignIn = () => {
   return (
     <>
       {contextHolder}
-      <div
-        style={{
-          display: "flex",
-          height: "100vh",
-          justifyContent: "center",
-          alignItems: "center",
-        }}
-      >
-        <Card
-          className={animate ? "animated-card" : ""}
-          style={{
-            width: 400,
-            borderRadius: 8,
-            background: "#fff",
-            border: "none",
-            boxShadow: "0 4px 12px rgba(0, 0, 0, 0.1)",
-          }}
-        >
-          <div style={{ padding: "40px 32px" }}>
+      <AuthCardWrapper width={400}>
             <Title level={3} style={{ textAlign: "center", marginBottom: 32 }}>
               Sign in to your account
             </Title>
@@ -81,8 +58,6 @@ const SignIn = () => {
               form={form}
               layout="vertical"
               onFinish={onFinish}
-              requiredMark={false}
-              autoComplete="off"
             >
               <Form.Item
                 name="usernameOrEmail" 
@@ -114,9 +89,7 @@ const SignIn = () => {
                 <Link to="/updatepassword">Forgot password?</Link>
               </div>
             </Form>
-          </div>
-        </Card>
-      </div>
+      </AuthCardWrapper>
     </>
   );
 };

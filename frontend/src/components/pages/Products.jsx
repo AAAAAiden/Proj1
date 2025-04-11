@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { Typography, Flex, Button, Dropdown, message } from "antd";
-import { DownOutlined } from "@ant-design/icons";
 import ProductCard from "./ProductCard";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from 'react-redux';
 import { clearCart } from '../../store/cartSlice';
+import { getAllProducts } from "./productApi";
 
 const { Title } = Typography;
 
@@ -18,15 +18,17 @@ const Products = () => {
   const [messageApi, contextHolder] = message.useMessage();
 
   useEffect(() => {
-    fetch("http://localhost:5001/api/products", {
-      headers: {
-        "x-auth-token": sessionStorage.getItem("token"),
-      },
-    })
-      .then((res) => res.json())
+    getAllProducts()
       .then((data) => setProducts(data))
       .catch((err) => console.error("Error fetching products:", err));
   }, []);
+
+  const sortOptions = [
+    { key: "newest", label: "Date: new to old" },
+    { key: "oldest", label: "Date: old to new" },
+    { key: "cheapest", label: "Price: low to high" },
+    { key: "valuable", label: "Price: high to low" },
+  ];
 
   const sortedProducts = [...products].sort((a, b) => {
     if (sortOrder === "newest") return new Date(b.createdAt) - new Date(a.createdAt);
@@ -36,16 +38,9 @@ const Products = () => {
     return 0;
   });
 
-  const handleSortChange = (e) => {
-    setSortOrder(e.key);
+  const handleSortChange = (option) => {
+    setSortOrder(option.key);
   };
-
-  const sortOptions = [
-    { key: "newest", label: "Date: new to old" },
-    { key: "oldest", label: "Date: old to new" },
-    { key: "cheapest", label: "Price: low to high" },
-    { key: "valuable", label: "Price: high to low" },
-  ];
 
   const handleClearCart = () => {
     dispatch(clearCart());
@@ -62,14 +57,14 @@ const Products = () => {
     {contextHolder}
     <div style={{ padding: "20px", height: "100%", display: "flex", flexDirection: "column" }}>
       <Flex justify="space-between" align="center" style={{ marginBottom: 24 }}>
-        <Title level={2} style={{ margin: 0 }}>
+        <Title level={2}>
           Our Products
         </Title>
 
         <Flex gap="small">
-          <Dropdown menu={{ items: sortOptions, onClick: handleSortChange }} placement="bottomRight">
+          <Dropdown menu={{ items: sortOptions, onClick: handleSortChange }} placement="bottomLeft">
             <Button>
-              {sortOptions.find((opt) => opt.key === sortOrder)?.label} <DownOutlined />
+              {sortOptions.find((opt) => opt.key === sortOrder)?.label}
             </Button>
           </Dropdown>
 
@@ -87,7 +82,7 @@ const Products = () => {
       <div style={{ flex: 1, overflowY: "auto", paddingRight: 4 }}>
         <Flex wrap gap="large" justify="flex-start">
           {sortedProducts.map((product) => (
-            <div key={product.id || product._id} className="product-card">
+            <div key={product._id} className="product-card">
               <ProductCard product={product} />
             </div>
           ))}

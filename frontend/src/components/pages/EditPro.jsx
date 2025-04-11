@@ -1,9 +1,16 @@
 import React, { useState, useEffect } from "react";
 import {
-  Card, Form, Input, Button, message, Typography, InputNumber, Select, Upload, Spin, Modal
+   Form, Input, Button, message, Typography, InputNumber, Select, Upload, Spin, Modal
 } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
 import { useNavigate, useParams } from "react-router-dom";
+import AuthCardWrapper from "../Auth/AuthCardWrapper";
+import {
+  checkProductNameExists,
+  getProductById,
+  updateProduct,
+  deleteProduct
+} from "./productApi";
 
 const { Title } = Typography;
 const { Option } = Select;
@@ -17,14 +24,10 @@ const EditProduct = () => {
   const [productName, setProductName] = useState("");
   const navigate = useNavigate();
   const { productId } = useParams();
+  const token = sessionStorage.getItem("token");
 
   useEffect(() => {
-    fetch(`http://localhost:5001/api/products/${productId}`, {
-      headers: {
-        "x-auth-token": sessionStorage.getItem("token"),
-      },
-    })
-      .then(res => res.json())
+    getProductById(productId, token)
       .then(data => {
         const productData = {
           name: data.name,
@@ -39,50 +42,27 @@ const EditProduct = () => {
         setProductName(data.name);
       })
       .catch(() => messageApi.error("Failed to load product info"));
-  }, [productId, form, messageApi]);
+  }, [productId, form, messageApi, token]);
 
   const onFinish = async (values) => {
     setLoading(true);
-    const token = sessionStorage.getItem("token");
     const name = values.product.name;
 
     try {
       // Check if name is already taken (excluding current product)
       if (name !== productName) {
-        const checkRes = await fetch(
-          `http://localhost:5001/api/products/check-name?name=${encodeURIComponent(name)}`
-        );
-        const checkData = await checkRes.json();
+        const checkData = await checkProductNameExists(name);
         if (checkData.exists) {
           return messageApi.error("A product with this name already exists.");
         }
       }
 
-      const formData = new FormData();
-      formData.append("name", name);
-      formData.append("description", values.product.Description || "");
-      formData.append("category", values.product.category);
-      formData.append("price", values.product.price);
-      formData.append("quantity", values.product.quantity);
-
-      const imageFile = values.product.image?.[0]?.originFileObj;
-      if (imageFile) {
-        formData.append("image", imageFile);
-      }
-
-      const res = await fetch(`http://localhost:5001/api/products/${productId}`, {
-        method: "PUT",
-        headers: {
-          "x-auth-token": token,
-        },
-        body: formData,
-      });
-
-      const data = await res.json().catch(() => ({}));
-      if (!res.ok) throw data;
+      await updateProduct(productId, values.product, token);
 
       messageApi.success("Product updated successfully!");
-      navigate("/products");
+      setTimeout(() => {
+        navigate("/products");
+      }, 1500); 
     } catch (err) {
       console.error("Update error:", err);
       messageApi.error(err.msg || "Failed to update product.");
@@ -102,16 +82,7 @@ const EditProduct = () => {
       onOk: async () => {
         setLoading(true);
         try {
-          const res = await fetch(`http://localhost:5001/api/products/${productId}`, {
-            method: "DELETE",
-            headers: {
-              "x-auth-token": sessionStorage.getItem("token"),
-            },
-          });
-  
-          const data = await res.json().catch(() => ({}));
-          if (!res.ok) throw data;
-  
+          await deleteProduct(productId, token);
           messageApi.success("Product deleted successfully!");
           navigate("/products");
         } catch (err) {
@@ -128,22 +99,7 @@ const EditProduct = () => {
   return (
     <>
       {contextHolder}
-      <div style={{
-        display: "flex",
-        height: "100vh",
-        justifyContent: "center",
-        alignItems: "center"
-      }}>
-        <Card
-          style={{
-            width: 500,
-            borderRadius: 8,
-            background: "#fff",
-            border: "none",
-            boxShadow: "0 4px 12px rgba(0, 0, 0, 0.1)",
-          }}
-        >
-          <div style={{ padding: "40px 32px" }}>
+      <AuthCardWrapper width={500}>
             <Title level={3} style={{ textAlign: "center", marginBottom: 32 }}>
               Edit Product
             </Title>
@@ -304,9 +260,7 @@ const EditProduct = () => {
                 </Form.Item>
               </Form>
             </Spin>
-          </div>
-        </Card>
-      </div>
+      </AuthCardWrapper>
     </>
   );
 };

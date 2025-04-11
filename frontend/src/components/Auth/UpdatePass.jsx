@@ -1,16 +1,13 @@
-import React, { useEffect, useState } from "react";
-import { Card, Form, Input, Button, Typography, message } from "antd";
+import React from "react";
+import { Form, Input, Button, Typography } from "antd";
 import { useNavigate } from "react-router-dom";
+import AuthCardWrapper from "./AuthCardWrapper";
+
 const { Title, Text } = Typography;
 
 const UpdatePassword = () => {
   const [form] = Form.useForm();
-  const [animate, setAnimate] = useState(false);
-  const [messageApi, contextHolder] = message.useMessage();
   const navigate = useNavigate();
-  useEffect(() => {
-    setAnimate(true);
-  }, []);
 
   const onFinish = () => {
     navigate("/recovery-sent")
@@ -18,26 +15,7 @@ const UpdatePassword = () => {
 
   return (
     <>
-      {contextHolder}
-      <div
-        style={{
-          display: "flex",
-          height: "100vh",
-          justifyContent: "center",
-          alignItems: "center",
-        }}
-      >
-        <Card
-          className={animate ? "animated-card" : ""}
-          style={{
-            width: 400,
-            borderRadius: 8,
-            background: "#fff",
-            border: "none",
-            boxShadow: "0 4px 12px rgba(0, 0, 0, 0.1)",
-          }}
-        >
-          <div style={{ padding: "40px 32px" }}>
+      <AuthCardWrapper width={400}>
             <Title level={3} style={{ textAlign: "center", marginBottom: 12 }}>
               Update Your Password
             </Title>
@@ -69,9 +47,7 @@ const UpdatePassword = () => {
                 </Button>
               </Form.Item>
             </Form>
-          </div>
-        </Card>
-      </div>
+      </AuthCardWrapper>
     </>
   );
 };
