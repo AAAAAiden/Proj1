@@ -16,7 +16,7 @@ const upload = multer({
     s3,
     bucket: process.env.AWS_BUCKET_NAME,
     metadata: (req, file, cb) => {
-      cb(null, { fieldName: file.fieldname });
+      cb(null, { fieldName: file.fieldname }); // access <input name='image'/>
     },
     key: (req, file, cb) => {
       const filename = `products/${Date.now()}-${file.originalname}`;

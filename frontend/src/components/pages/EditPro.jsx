@@ -5,6 +5,8 @@ import {
 import { UploadOutlined } from "@ant-design/icons";
 import { useNavigate, useParams } from "react-router-dom";
 import AuthCardWrapper from "../Auth/AuthCardWrapper";
+import { useAuth } from "../../context/AuthContext";
+
 import {
   checkProductNameExists,
   getProductById,
@@ -24,7 +26,7 @@ const EditProduct = () => {
   const [productName, setProductName] = useState("");
   const navigate = useNavigate();
   const { productId } = useParams();
-  const token = sessionStorage.getItem("token");
+  const { token } = useAuth();
 
   useEffect(() => {
     getProductById(productId, token)
@@ -49,7 +51,6 @@ const EditProduct = () => {
     const name = values.product.name;
 
     try {
-      // Check if name is already taken (excluding current product)
       if (name !== productName) {
         const checkData = await checkProductNameExists(name);
         if (checkData.exists) {
@@ -148,7 +149,7 @@ const EditProduct = () => {
                       { required: true, message: "Please enter the price" },
                       { type: "number", min: 0, message: "Price must be a non-negative number" }
                     ]}
-                    style={{ display: "inline-block", width: "calc(50% - 8px)", margin: "0 8px" }}
+                    style={{ display: "inline-block", width: "calc(50% - 8px)", margin: "0 0 0 8px" }}
                   >
                     <InputNumber style={{ width: "100%" }} disabled={loading} />
                   </Form.Item>

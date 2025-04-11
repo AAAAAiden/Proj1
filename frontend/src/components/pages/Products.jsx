@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { useDispatch } from 'react-redux';
 import { clearCart } from '../../store/cartSlice';
 import { getAllProducts } from "./productApi";
+import { useAuth } from "../../context/AuthContext";
 
 const { Title } = Typography;
 
@@ -13,7 +14,7 @@ const Products = () => {
   const [sortOrder, setSortOrder] = useState("oldest");
   const [deleteDisabled, setDeleteDisabled] = useState(false);
   const navigate = useNavigate();
-  const role = sessionStorage.getItem("role");
+  const {role} = useAuth();
   const dispatch = useDispatch();
   const [messageApi, contextHolder] = message.useMessage();
 

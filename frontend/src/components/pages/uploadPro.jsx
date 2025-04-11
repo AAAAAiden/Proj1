@@ -6,6 +6,7 @@ import { UploadOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
 import AuthCardWrapper from "../Auth/AuthCardWrapper";
 import { checkProductNameExists, uploadProduct } from "./productApi";
+import { useAuth } from "../../context/AuthContext";
 
 const { Title } = Typography;
 const { Option } = Select;
@@ -16,9 +17,9 @@ const UploadPro = () => {
   const [previewUrl, setPreviewUrl] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const {token} = useAuth();
 
   const onFinish = async (values) => {
-    const token = sessionStorage.getItem("token");
     const name = values.product.name;
     setLoading(true);
 

@@ -50,10 +50,8 @@ const Layout = () => {
   
     try {
       const response = await fetch(`http://localhost:5001/api/products/search?q=${encodeURIComponent(value)}`);
-      console.log("API response status:", response.status);
       if (!response.ok) throw new Error('Search failed');
       const data = await response.json();
-      console.log("Search results:", data);
 
       const options = data.map((product) => ({
         value: product.name,

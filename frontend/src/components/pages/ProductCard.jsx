@@ -3,6 +3,7 @@ import { Card, Input, Button, message } from 'antd';
 import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { addToCart, updateQuantity } from '../../store/cartSlice';
+import { useAuth } from "../../context/AuthContext";
 
 const ProductCard = ({ product }) => {
   const dispatch = useDispatch();
@@ -11,7 +12,7 @@ const ProductCard = ({ product }) => {
 
   const cartItems = useSelector((state) => state.cart.items);
   const cartItem = cartItems.find((item) => item._id === product._id);
-  const role = sessionStorage.getItem("role");
+  const {role} = useAuth();
 
   const current = cartItem?.quantity || 0;
   const maxStock = cartItem?.stock || product.quantity || 0;
@@ -19,7 +20,7 @@ const ProductCard = ({ product }) => {
   const isEditing = current > 0;
 
   const handleAddToCartClick = (e) => {
-    e.stopPropagation();
+    //e.stopPropagation(); // prevent navigate to the product detail page 
     dispatch(addToCart({ ...product, quantity: 1, stock: product.quantity }));
   };
 
@@ -59,7 +60,7 @@ const ProductCard = ({ product }) => {
   };
 
   return (
-    <Card hoverable style={{ maxWidth: 300, height: 400, flexGrow: 1 }}>
+    <Card hoverable style={{ maxWidth: 300, height: 400, }}>
     {contextHolder}
       <Link to={`/products/${product._id}`} style={{ textDecoration: 'none' }}>
         <div style={{ display: 'flex', justifyContent: 'center', marginTop: 10 }}>
@@ -97,7 +98,7 @@ const ProductCard = ({ product }) => {
 
       {isEditing ? (
         <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 12 }}>
-          <Button onClick={handleDecrement} style={{ width: 64, padding: 0 }}>−</Button>
+          <Button onClick={handleDecrement} style={{ width: 64 }}>−</Button>
           <Input
             value={current}
             onChange={handleQuantityChange}
@@ -106,7 +107,7 @@ const ProductCard = ({ product }) => {
           <Button
             onClick={handleIncrement}
             disabled={current >= maxStock}
-            style={{ width: 64, padding: 0 }}
+            style={{ width: 64 }}
           >
             +
           </Button>

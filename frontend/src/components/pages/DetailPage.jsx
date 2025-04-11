@@ -4,7 +4,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { addToCart, updateQuantity } from '../../store/cartSlice';
 import { getProductById } from './productApi';
-
+import { useAuth } from "../../context/AuthContext";
 const { Title, Text } = Typography;
 
 
@@ -17,8 +17,10 @@ const DetailPage = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const cartItems = useSelector((state) => state.cart.items);
-  const role = sessionStorage.getItem("role");
-  const token = sessionStorage.getItem("token");
+  // const role = sessionStorage.getItem("role");
+  const {role} = useAuth();
+  //const token = sessionStorage.getItem("token");
+  const {token} = useAuth();
 
   const cartItem = cartItems.find((item) => item._id === product?._id);
   const quantity = cartItem?.quantity || 0;
@@ -34,7 +36,7 @@ const DetailPage = () => {
         console.error("Error loading product:", err);
         messageApi.error("Failed to load product details.");
       });
-  }, [productId, messageApi]);
+  }, [productId, messageApi, token]);
 
   const handleAddToCartClick = () => {
     dispatch(addToCart({ ...product, quantity: 1 }));
