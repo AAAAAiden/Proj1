@@ -1,9 +1,11 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import {
-  Card, Form, Input, Button, message, Typography, InputNumber, Select, Upload, Spin
+  Form, Input, Button, message, Typography, InputNumber, Select, Upload, Spin
 } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
+import AuthCardWrapper from "../Auth/AuthCardWrapper";
+import { checkProductNameExists, uploadProduct } from "./productApi";
 
 const { Title } = Typography;
 const { Option } = Select;
@@ -11,14 +13,9 @@ const { Option } = Select;
 const UploadPro = () => {
   const [form] = Form.useForm();
   const [messageApi, contextHolder] = message.useMessage();
-  const [animate, setAnimate] = useState(false);
   const [previewUrl, setPreviewUrl] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-
-  useEffect(() => {
-    setAnimate(true);
-  }, []);
 
   const onFinish = async (values) => {
     const token = sessionStorage.getItem("token");
@@ -26,32 +23,12 @@ const UploadPro = () => {
     setLoading(true);
 
     try {
-      const checkRes = await fetch(
-        `http://localhost:5001/api/products/check-name?name=${encodeURIComponent(name)}`
-      );
-      const checkData = await checkRes.json();
+      const checkData = await checkProductNameExists(name);
       if (checkData.exists) {
         return messageApi.error("A product with this name already exists.");
       }
 
-      const formData = new FormData();
-      formData.append("name", name);
-      formData.append("description", values.product.Description || "");
-      formData.append("category", values.product.category);
-      formData.append("price", values.product.price);
-      formData.append("quantity", values.product.quantity);
-      formData.append("image", values.product.image[0].originFileObj);
-
-      const res = await fetch("http://localhost:5001/api/products", {
-        method: "POST",
-        headers: {
-          "x-auth-token": token,
-        },
-        body: formData,
-      });
-
-      const data = await res.json().catch(() => ({}));
-      if (!res.ok) throw data;
+      await uploadProduct(values.product, token);
 
       messageApi.success("Product uploaded successfully!");
       form.resetFields();
@@ -67,25 +44,7 @@ const UploadPro = () => {
   return (
     <>
       {contextHolder}
-      <div
-        style={{
-          display: "flex",
-          height: "100vh",
-          justifyContent: "center",
-          alignItems: "center",
-        }}
-      >
-        <Card
-          className={animate ? "animated-card" : ""}
-          style={{
-            width: 500,
-            borderRadius: 8,
-            background: "#fff",
-            border: "none",
-            boxShadow: "0 4px 12px rgba(0, 0, 0, 0.1)",
-          }}
-        >
-          <div style={{ padding: "40px 32px" }}>
+      <AuthCardWrapper width={500}>
             <Title level={3} style={{ textAlign: "center", marginBottom: 32 }}>
               Add New Product
             </Title>
@@ -237,9 +196,7 @@ const UploadPro = () => {
                 </Form.Item>
               </Form>
             </Spin>
-          </div>
-        </Card>
-      </div>
+      </AuthCardWrapper>
     </>
   );
 };

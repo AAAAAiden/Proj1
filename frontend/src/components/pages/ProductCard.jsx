@@ -59,7 +59,7 @@ const ProductCard = ({ product }) => {
   };
 
   return (
-    <Card hoverable style={{ width: 300, height: 400 }}>
+    <Card hoverable style={{ maxWidth: 300, height: 400, flexGrow: 1 }}>
     {contextHolder}
       <Link to={`/products/${product._id}`} style={{ textDecoration: 'none' }}>
         <div style={{ display: 'flex', justifyContent: 'center', marginTop: 10 }}>

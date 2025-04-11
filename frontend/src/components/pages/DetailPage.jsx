@@ -3,6 +3,7 @@ import { Card, Typography, Input, Button, message, Row, Col } from 'antd';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { addToCart, updateQuantity } from '../../store/cartSlice';
+import { getProductById } from './productApi';
 
 const { Title, Text } = Typography;
 
@@ -17,18 +18,14 @@ const DetailPage = () => {
   const navigate = useNavigate();
   const cartItems = useSelector((state) => state.cart.items);
   const role = sessionStorage.getItem("role");
+  const token = sessionStorage.getItem("token");
 
   const cartItem = cartItems.find((item) => item._id === product?._id);
   const quantity = cartItem?.quantity || 0;
   const isEditing = quantity > 0;
 
   useEffect(() => {
-    fetch(`http://localhost:5001/api/products/${productId}`, {
-      headers: {
-        "x-auth-token": sessionStorage.getItem("token"),
-      },
-    })
-      .then((res) => res.json())
+    getProductById(productId, token)
       .then((data) => {
         console.log(data)
         setProduct(data)

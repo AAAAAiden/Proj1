@@ -1,18 +1,14 @@
-import React, { useEffect, useState } from 'react';
-import { Form, Input, Button, message, Card, Typography } from 'antd';
+import React from 'react';
+import { Form, Input, Button, message, Typography } from 'antd';
 import { signUp } from './auth';
 import { Link } from 'react-router-dom';
+import AuthCardWrapper from "./AuthCardWrapper";
 
 const { Title, Text } = Typography;
 
 const SignUp = () => {
   const [form] = Form.useForm();
   const [messageApi, contextHolder] = message.useMessage();
-  const [animate, setAnimate] = useState(false);
-
-  useEffect(() => {
-    setAnimate(true);
-  }, []);
 
   const onFinish = (values) => {
     signUp(values)
@@ -37,25 +33,7 @@ const SignUp = () => {
   return (
     <>
       {contextHolder}
-      <div
-        style={{
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          height: '100vh',
-        }}
-      >
-        <Card
-          className={animate ? 'animated-card' : ''}
-          style={{
-            width: 400,
-            borderRadius: 8,
-            background: '#fff',
-            border: 'none',
-            boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
-          }}
-        >
-          <div style={{ padding: '40px 32px' }}>
+      <AuthCardWrapper width={400}>
             <Title level={3} style={{ textAlign: 'center', marginBottom: 32 }}>
               Create your account
             </Title>
@@ -100,9 +78,7 @@ const SignUp = () => {
                 </Text>
               </div>
             </Form>
-          </div>
-        </Card>
-      </div>
+      </AuthCardWrapper>
     </>
   );
 };
